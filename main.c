@@ -1,6 +1,7 @@
 #include <GL4D/gl4duw_SDL2.h>
 #include <GL4D/gl4dg.h>
 #include <stdio.h>
+#include <math.h>
 
 static void init(void);
 /* TODO : gérer le retaillage de la fenêtre */
@@ -33,7 +34,19 @@ void init(void) {
   gl4duGenMatrix(GL_FLOAT, "modelView");
 }
 
+// Renvoyer le delta temps écoulé entre deux appels
+static double get_dt(void) {
+  static double t0 = 0.0f;
+  // Récupérer le temps écoulé en ms entre le démarrage du programme et la frame en cours
+  double t = gl4dGetElapsedTime();
+  // Calculer le temps écoulé depuis la frame précédente en seconde
+  double dt = (t - t0) / 1000.0f;
+  t0 = t;
+  return dt;
+}
+
 void draw(void) {
+  static GLfloat rot = 0.0f;
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glUseProgram(_pId);
   // Envoyer une variable globale weight et sa valeur dans le programme _pId
@@ -44,13 +57,15 @@ void draw(void) {
   gl4duLoadIdentityf(); // matrice neutre utilisée pour l'initialisation 
   
   // Appliquer la modification de la matrice côté CPU
-  gl4duTranslatef(0.5f, 0.0f, 0.0f);
+  gl4duTranslatef(sin(rot), 0.0f, 0.0f);
   
   // Les modifications de matrices doivent être envoyées au GPU avant de dessinner
   gl4duSendMatrices();
 
   gl4dgDraw(_quadId);
   glUseProgram(0);
+
+  rot += 2.0f * M_PI * get_dt();
 }
 
 void sortie(void) {
