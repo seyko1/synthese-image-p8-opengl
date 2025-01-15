@@ -37,7 +37,10 @@ void init(void) {
   gl4duGenMatrix(GL_FLOAT, "projection");
   gl4duBindMatrix("projection");
   gl4duLoadIdentityf();
-  gl4duFrustumf(-1.0f, 1.0f, -1.0f, 1.0f, 1.0f, 100.0f);
+  
+  GLfloat bottom = (-1.0f * _wH) / _wW;
+  GLfloat top    = (1.0f * _wH) / _wW;
+  gl4duFrustumf(-1.0f, 1.0f, bottom, top, 1.0f, 100.0f);
 }
 
 // Renvoyer le delta temps écoulé entre deux appels
