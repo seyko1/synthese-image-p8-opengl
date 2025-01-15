@@ -30,6 +30,7 @@ void init(void) {
   _quadId = gl4dgGenQuadf();
   // Créer un programme shader à partir de hello.vs et hello.fs, qui pourra s'occuper du rendu.
   _pId = gl4duCreateProgram("<vs>shaders/hello.vs", "<fs>shaders/hello.fs", NULL);
+  gl4duGenMatrix(GL_FLOAT, "modelView");
 }
 
 void draw(void) {
@@ -37,6 +38,17 @@ void draw(void) {
   glUseProgram(_pId);
   // Envoyer une variable globale weight et sa valeur dans le programme _pId
   glUniform1f(glGetUniformLocation(_pId, "weight"), 1.1f);
+  
+
+  gl4duBindMatrix("modelView");
+  gl4duLoadIdentityf(); // matrice neutre utilisée pour l'initialisation 
+  
+  // Appliquer la modification de la matrice côté CPU
+  gl4duTranslatef(0.5f, 0.0f, 0.0f);
+  
+  // Les modifications de matrices doivent être envoyées au GPU avant de dessinner
+  gl4duSendMatrices();
+
   gl4dgDraw(_quadId);
   glUseProgram(0);
 }

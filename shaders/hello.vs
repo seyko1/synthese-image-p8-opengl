@@ -9,8 +9,10 @@ layout(location = 2) in vec2 texCoord;
 
 // Variable globale reçu du programme C côté CPU, en lecture seule, accessible par tout les processus côté GPU
 uniform float weight;
+// Matrice 4D de translation reçue du CPU
+uniform mat4 modelView;
 
 void main() {
      // Variable attendue par openGL
-     gl_Position = vec4(pos, weight);
+     gl_Position = modelView * vec4(pos, weight);
 }
