@@ -41,6 +41,9 @@ void init(void) {
   GLfloat bottom = (-1.0f * _wH) / _wW;
   GLfloat top    = (1.0f * _wH) / _wW;
   gl4duFrustumf(-1.0f, 1.0f, bottom, top, 1.0f, 100.0f);
+
+  // Afficher le cube en file de fer
+  glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 }
 
 // Renvoyer le delta temps écoulé entre deux appels
