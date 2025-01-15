@@ -10,7 +10,7 @@ static void draw(void);
 static void sortie(void);
 
 static GLuint _wW = 640, _wH = 480;
-static GLuint _quadId = 0;
+static GLuint _cubeId = 0;
 static GLuint _pId = 0;
 
 int main(int argc, char ** argv) {
@@ -28,7 +28,7 @@ int main(int argc, char ** argv) {
 
 void init(void) {
   glClearColor(0.5f, 0.0f, 0.0f, 1.0f);
-  _quadId = gl4dgGenQuadf();
+  _cubeId = gl4dgGenCubef();
   // Créer un programme shader à partir de hello.vs et hello.fs, qui pourra s'occuper du rendu.
   _pId = gl4duCreateProgram("<vs>shaders/hello.vs", "<fs>shaders/hello.fs", NULL);
   gl4duGenMatrix(GL_FLOAT, "modelView");
@@ -60,12 +60,13 @@ void draw(void) {
   gl4duLoadIdentityf(); // matrice neutre utilisée pour l'initialisation 
   
   // -2 sur les z car notre frustum a un near à 1 donc on commence à voir non plus à 0 mais -1 (éloignement)
-  gl4duTranslatef(sin(rot), 0.0f, -2.0f);
+  // on éloigne à -3 quand on passe à un cube car il a une profondeur (+1 en avant -1 en arrière)
+  gl4duTranslatef(sin(rot), 0.0f, -3.0f);
   
   // Les modifications de matrices doivent être envoyées au GPU avant de dessinner
   gl4duSendMatrices();
 
-  gl4dgDraw(_quadId);
+  gl4dgDraw(_cubeId);
   glUseProgram(0);
 
   rot += 2.0f * M_PI * get_dt();
