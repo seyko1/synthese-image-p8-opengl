@@ -68,6 +68,10 @@ void draw(void) {
   // -2 sur les z car notre frustum a un near à 1 donc on commence à voir non plus à 0 mais -1 (éloignement)
   // on éloigne à -3 quand on passe à un cube car il a une profondeur (+1 en avant -1 en arrière)
   gl4duTranslatef(sin(rot), 0.0f, -3.0f);
+  // Convertir rot de radian à degré
+  GLfloat angle = 180.0f * rot / M_PI;
+  // Rotation autour de l'axe des y 
+  gl4duRotatef(angle, 0.0f, 1.0f, 0.0f); 
   
   // Les modifications de matrices doivent être envoyées au GPU avant de dessinner
   gl4duSendMatrices();
