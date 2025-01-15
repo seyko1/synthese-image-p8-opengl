@@ -32,6 +32,12 @@ void init(void) {
   // Créer un programme shader à partir de hello.vs et hello.fs, qui pourra s'occuper du rendu.
   _pId = gl4duCreateProgram("<vs>shaders/hello.vs", "<fs>shaders/hello.fs", NULL);
   gl4duGenMatrix(GL_FLOAT, "modelView");
+
+  // Appliquer une matrice de projection, elle sera envoyé lors de l'appel à sendMatrices()
+  gl4duGenMatrix(GL_FLOAT, "projection");
+  gl4duBindMatrix("projection");
+  gl4duLoadIdentityf();
+  gl4duFrustumf(-1.0f, 1.0f, -1.0f, 1.0f, 1.0f, 100.0f);
 }
 
 // Renvoyer le delta temps écoulé entre deux appels
@@ -49,15 +55,12 @@ void draw(void) {
   static GLfloat rot = 0.0f;
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glUseProgram(_pId);
-  // Envoyer une variable globale weight et sa valeur dans le programme _pId
-  glUniform1f(glGetUniformLocation(_pId, "weight"), 1.1f);
-  
 
   gl4duBindMatrix("modelView");
   gl4duLoadIdentityf(); // matrice neutre utilisée pour l'initialisation 
   
-  // Appliquer la modification de la matrice côté CPU
-  gl4duTranslatef(sin(rot), 0.0f, 0.0f);
+  // -2 sur les z car notre frustum a un near à 1 donc on commence à voir non plus à 0 mais -1 (éloignement)
+  gl4duTranslatef(sin(rot), 0.0f, -2.0f);
   
   // Les modifications de matrices doivent être envoyées au GPU avant de dessinner
   gl4duSendMatrices();

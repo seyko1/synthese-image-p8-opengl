@@ -7,12 +7,9 @@ layout(location = 1) in vec3 normal;
 // Coordonnée 2D dans une texture
 layout(location = 2) in vec2 texCoord;
 
-// Variable globale reçu du programme C côté CPU, en lecture seule, accessible par tout les processus côté GPU
-uniform float weight;
 // Matrice 4D de translation reçue du CPU
-uniform mat4 modelView;
+uniform mat4 modelView, projection;
 
 void main() {
-     // Variable attendue par openGL
-     gl_Position = modelView * vec4(pos, weight);
+    gl_Position = projection * modelView * vec4(pos, 1.0);
 }
