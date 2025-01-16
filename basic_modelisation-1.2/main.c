@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include <math.h>
 
+#define NB_E 16
+
 static void init(void);
 /* TODO : gérer le retaillage de la fenêtre */
 /* static void resize(int width, int height); */
@@ -12,6 +14,8 @@ static void sortie(void);
 static GLuint _wW = 640, _wH = 480;
 static GLuint _cubeId = 0;
 static GLuint _pId = 0;
+
+static int _hauteurs[NB_E];
 
 int main(int argc, char ** argv) {
   if(!gl4duwCreateWindow(argc, argv, "Ateliers API8 - modélisation", GL4DW_POS_CENTERED, GL4DW_POS_CENTERED,
@@ -27,6 +31,12 @@ int main(int argc, char ** argv) {
 }
 
 void init(void) {
+  int i;
+  // Initialisation du tableau _hauteurs
+  for (i = 0; i < NB_E; ++i) {
+    // valeur aléatoire entre -128 et 127
+    _hauteurs[i] = /*-128 +*/ (rand() & 0xFF);
+  }
   glClearColor(0.5f, 0.0f, 0.0f, 1.0f);
   _cubeId = gl4dgGenCubef();
   // Créer un programme shader à partir de hello.vs et hello.fs, qui pourra s'occuper du rendu.
@@ -42,7 +52,7 @@ void init(void) {
   GLfloat top    = (1.0f * _wH) / _wW;
   gl4duFrustumf(-1.0f, 1.0f, bottom, top, 1.0f, 100.0f);
 
-  // Afficher le cube en file de fer
+  // Afficher le cube en fil de fer
   glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 }
 
@@ -58,28 +68,37 @@ static double get_dt(void) {
 }
 
 void draw(void) {
-  static GLfloat rot = 0.0f;
+  int i, j;
+
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glUseProgram(_pId);
 
   gl4duBindMatrix("modelView");
   gl4duLoadIdentityf(); // matrice neutre utilisée pour l'initialisation 
   
-  // -2 sur les z car notre frustum a un near à 1 donc on commence à voir non plus à 0 mais -1 (éloignement)
-  // on éloigne à -3 quand on passe à un cube car il a une profondeur (+1 en avant -1 en arrière)
-  gl4duTranslatef(sin(rot), 0.0f, -3.0f);
-  // Convertir rot de radian à degré
-  GLfloat angle = 180.0f * rot / M_PI;
-  // Rotation autour de l'axe des y 
-  gl4duRotatef(angle, 0.0f, 1.0f, 0.0f); 
-  
+  gl4duTranslatef(0.0, 0.0f, -2.0f);
+  for (i = 0; i < NB_E; ++i) {
+    // Ramener i dans la plage [-1, 1] 
+    GLfloat x = 2.0f * (i / (NB_E - 1.0f)) - 1.0f;
+    gl4duPushMatrix();
+    gl4duTranslatef(x, 0.0f, 0.0f);
+    for (j = 0; j <= _hauteurs[i]; ++j) {
+      GLfloat y  = j / 255.0f;
+      gl4duPushMatrix();
+      gl4duTranslatef(0.0f, y, 0.0f);
+      // placer le scale en bout de chaine pour éviter qu'il n'agissse sur les translations précédentes
+      gl4duScalef(0.02f, 0.02f, 0.02f);
+      gl4duSendMatrices();
+      gl4duPopMatrix();
+      gl4dgDraw(_cubeId);
+    }
+    gl4duPopMatrix();
+  }
+
   // Les modifications de matrices doivent être envoyées au GPU avant de dessinner
   gl4duSendMatrices();
 
-  gl4dgDraw(_cubeId);
   glUseProgram(0);
-
-  rot += 2.0f * M_PI * get_dt();
 }
 
 void sortie(void) {
