@@ -62,7 +62,7 @@ void draw(void) {
   gl4duBindMatrix("modelView");
   gl4duLoadIdentityf(); // matrice neutre utilisée pour l'initialisation 
   
-  gl4duTranslatef(0.0, 0.0f, -2.0f);
+  gl4duTranslatef(0.0, 0.0f, -1.1f);
   for (i = 0; i < NB_E; ++i) {
     // Ramener i dans la plage [-1, 1] 
     GLfloat x = 2.0f * (i / (NB_E - 1.0f)) - 1.0f;
