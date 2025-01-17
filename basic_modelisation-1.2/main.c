@@ -51,20 +51,6 @@ void init(void) {
   GLfloat bottom = (-1.0f * _wH) / _wW;
   GLfloat top    = (1.0f * _wH) / _wW;
   gl4duFrustumf(-1.0f, 1.0f, bottom, top, 1.0f, 100.0f);
-
-  // Afficher le cube en fil de fer
-  glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-}
-
-// Renvoyer le delta temps écoulé entre deux appels
-static double get_dt(void) {
-  static double t0 = 0.0f;
-  // Récupérer le temps écoulé en ms entre le démarrage du programme et la frame en cours
-  double t = gl4dGetElapsedTime();
-  // Calculer le temps écoulé depuis la frame précédente en seconde
-  double dt = (t - t0) / 1000.0f;
-  t0 = t;
-  return dt;
 }
 
 void draw(void) {
