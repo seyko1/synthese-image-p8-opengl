@@ -35,7 +35,7 @@ void init(void) {
   // Initialisation du tableau _hauteurs
   for (i = 0; i < NB_E; ++i) {
     // valeur aléatoire entre -128 et 127
-    _hauteurs[i] = /*-128 +*/ (rand() & 0xFF);
+    _hauteurs[i] = -128 + (rand() & 0xFF);
   }
   glClearColor(0.5f, 0.0f, 0.0f, 1.0f);
   _cubeId = gl4dgGenCubef();
@@ -82,8 +82,8 @@ void draw(void) {
     GLfloat x = 2.0f * (i / (NB_E - 1.0f)) - 1.0f;
     gl4duPushMatrix();
     gl4duTranslatef(x, 0.0f, 0.0f);
-    for (j = 0; j <= _hauteurs[i]; ++j) {
-      GLfloat y  = j / 255.0f;
+    for (j = 0; j <= abs(_hauteurs[i]); ++j) {
+      GLfloat y  = (_hauteurs[i] < 0 ? -j : j) / 256.0f;
       gl4duPushMatrix();
       gl4duTranslatef(0.0f, y, 0.0f);
       // placer le scale en bout de chaine pour éviter qu'il n'agissse sur les translations précédentes
