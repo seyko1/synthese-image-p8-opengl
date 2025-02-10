@@ -11,8 +11,6 @@ static void init(void);
 /* TODO : gérer le retaillage de la fenêtre */
 /* static void resize(int width, int height); */
 static void draw(void);
-static void sortie(void);
-
 static GLuint _wW = 640, _wH = 480;
 static GLuint _cubeId = 0;
 static GLuint _pId = 0;
@@ -26,6 +24,7 @@ void spectre(int state) {
   switch(state) {
   case GL4DH_INIT:
     /* INITIALISEZ VOTRE ANIMATION (SES VARIABLES <STATIC>s) */
+    init();
     return;
   case GL4DH_FREE:
     /* LIBERER LA MEMOIRE UTILISEE PAR LES <STATIC>s */
@@ -46,9 +45,7 @@ void spectre(int state) {
     /* METTRE A JOUR VOTRE ANIMATION EN FONCTION DU SON */
     return;
   default: /* GL4DH_DRAW */
-    // modifie à chaque frame l'intensité de vert selon mp (qui varie entre 0 et 0.2)
-    glClearColor(0.0f, 5.0f * mp, 0.0f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
+    draw();
     return;
   }
 }
@@ -108,8 +105,4 @@ void draw(void) {
   gl4duSendMatrices();
 
   glUseProgram(0);
-}
-
-void sortie(void) {
-  gl4duClean(GL4DU_ALL);
 }
