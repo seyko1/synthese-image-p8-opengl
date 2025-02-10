@@ -25,6 +25,9 @@ extern "C" {
   extern void bleu(int state);
   extern void animationsInit(void);
 
+  // Dans spectre.c
+  extern void spectre(int state);
+
 #ifdef __cplusplus
 }
 #endif

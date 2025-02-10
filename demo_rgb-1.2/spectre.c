@@ -1,7 +1,9 @@
 #include <GL4D/gl4duw_SDL2.h>
 #include <GL4D/gl4dg.h>
+#include <GL4D/gl4dh.h>
 #include <stdio.h>
 #include <math.h>
+#include "audioHelper.h"
 
 #define NB_E 16
 
@@ -16,6 +18,40 @@ static GLuint _cubeId = 0;
 static GLuint _pId = 0;
 
 static int _hauteurs[NB_E];
+
+void spectre(int state) {
+  /* INITIALISEZ VOS VARIABLES */
+  /* ... */
+  static double mp = 0.0;
+  switch(state) {
+  case GL4DH_INIT:
+    /* INITIALISEZ VOTRE ANIMATION (SES VARIABLES <STATIC>s) */
+    return;
+  case GL4DH_FREE:
+    /* LIBERER LA MEMOIRE UTILISEE PAR LES <STATIC>s */
+    return;
+  case GL4DH_UPDATE_WITH_AUDIO:
+    int length = ahGetAudioStreamLength();
+    short * stream = (short*) ahGetAudioStream();
+    double m = 0.0;
+
+    // Avancer d'un pas de deux short (pour du stréréo)
+    for (int i = 0; i < length / 2; ++i) {
+      m += fabs(stream[i] / (double) (1 << 15));
+    }
+    mp = m / (length / 2);
+    printf("%f", mp);
+    return;
+
+    /* METTRE A JOUR VOTRE ANIMATION EN FONCTION DU SON */
+    return;
+  default: /* GL4DH_DRAW */
+    // modifie à chaque frame l'intensité de vert selon mp (qui varie entre 0 et 0.2)
+    glClearColor(0.0f, 5.0f * mp, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+    return;
+  }
+}
 
 void init(void) {
   int i;
