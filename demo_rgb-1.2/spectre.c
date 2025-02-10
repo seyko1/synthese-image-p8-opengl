@@ -17,19 +17,6 @@ static GLuint _pId = 0;
 
 static int _hauteurs[NB_E];
 
-int main(int argc, char ** argv) {
-  if(!gl4duwCreateWindow(argc, argv, "Ateliers API8 - modélisation", GL4DW_POS_CENTERED, GL4DW_POS_CENTERED,
-			 _wW, _wH, GL4DW_OPENGL | GL4DW_RESIZABLE | GL4DW_SHOWN)) {
-    fprintf(stderr, "Erreur lors de la création de la fenêtre\n");
-    return 1;
-  }
-  init();
-  atexit(sortie);
-  gl4duwDisplayFunc(draw);
-  gl4duwMainLoop();
-  return 0;
-}
-
 void init(void) {
   int i;
   // Initialisation du tableau _hauteurs
@@ -40,7 +27,7 @@ void init(void) {
   glClearColor(0.5f, 0.0f, 0.0f, 1.0f);
   _cubeId = gl4dgGenCubef();
   // Créer un programme shader à partir de hello.vs et hello.fs, qui pourra s'occuper du rendu.
-  _pId = gl4duCreateProgram("<vs>shaders/hello.vs", "<fs>shaders/hello.fs", NULL);
+  _pId = gl4duCreateProgram("<vs>shaders/spectre.vs", "<fs>shaders/spectre.fs", NULL);
   gl4duGenMatrix(GL_FLOAT, "modelView");
 
   // Appliquer une matrice de projection, elle sera envoyé lors de l'appel à sendMatrices()
