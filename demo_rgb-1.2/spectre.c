@@ -57,7 +57,7 @@ void init(void) {
     // valeur aléatoire entre -128 et 127
     _hauteurs[i] = -128 + (rand() & 0xFF);
   }
-  glClearColor(0.5f, 0.0f, 0.0f, 1.0f);
+
   _cubeId = gl4dgGenCubef();
   // Créer un programme shader à partir de hello.vs et hello.fs, qui pourra s'occuper du rendu.
   _pId = gl4duCreateProgram("<vs>shaders/spectre.vs", "<fs>shaders/spectre.fs", NULL);
@@ -75,7 +75,7 @@ void init(void) {
 
 void draw(void) {
   int i, j;
-
+  glClearColor(0.5f, 0.5f, 0.5f, 1.0f);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glUseProgram(_pId);
 
