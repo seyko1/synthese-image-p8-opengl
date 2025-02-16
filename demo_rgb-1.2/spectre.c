@@ -5,7 +5,7 @@
 #include <math.h>
 #include "audioHelper.h"
 
-#define NB_E 16
+#define NB_E 1024
 
 static void init(void);
 /* TODO : gérer le retaillage de la fenêtre */
@@ -20,7 +20,6 @@ static int _hauteurs[NB_E];
 void spectre(int state) {
   /* INITIALISEZ VOS VARIABLES */
   /* ... */
-  static double mp = 0.0;
   switch(state) {
   case GL4DH_INIT:
     /* INITIALISEZ VOTRE ANIMATION (SES VARIABLES <STATIC>s) */
@@ -32,14 +31,12 @@ void spectre(int state) {
   case GL4DH_UPDATE_WITH_AUDIO:
     int length = ahGetAudioStreamLength();
     short * stream = (short*) ahGetAudioStream();
-    double m = 0.0;
 
     // Avancer d'un pas de deux short (pour du stréréo)
-    for (int i = 0; i < length / 2; ++i) {
-      m += fabs(stream[i] / (double) (1 << 15));
+    for (int i = 0; i < length / 4; ++i) {
+      // 1024 valeurs d'oreille gauche, divisé par 256
+      _hauteurs[i] = stream[2 * i] >> 8;
     }
-    mp = m / (length / 2);
-    printf("%f", mp);
     return;
 
     /* METTRE A JOUR VOTRE ANIMATION EN FONCTION DU SON */
@@ -52,11 +49,6 @@ void spectre(int state) {
 
 void init(void) {
   int i;
-  // Initialisation du tableau _hauteurs
-  for (i = 0; i < NB_E; ++i) {
-    // valeur aléatoire entre -128 et 127
-    _hauteurs[i] = -128 + (rand() & 0xFF);
-  }
 
   _cubeId = gl4dgGenCubef();
   // Créer un programme shader à partir de hello.vs et hello.fs, qui pourra s'occuper du rendu.
