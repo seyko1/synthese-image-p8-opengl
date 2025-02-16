@@ -35,7 +35,7 @@ void spectre(int state) {
     // Avancer d'un pas de deux short (pour du stréréo)
     for (int i = 0; i < length / 4; ++i) {
       // 1024 valeurs d'oreille gauche, divisé par 256
-      _hauteurs[i] = stream[2 * i] >> 8;
+      _hauteurs[i] = stream[2 * i] >> 10;
     }
     return;
 
@@ -81,7 +81,7 @@ void draw(void) {
     gl4duPushMatrix();
     gl4duTranslatef(x, 0.0f, 0.0f);
     for (j = 0; j <= abs(_hauteurs[i]); ++j) {
-      GLfloat y  = (_hauteurs[i] < 0 ? -j : j) / 256.0f;
+      GLfloat y  = (_hauteurs[i] < 0 ? -j : j) / 64.0f;
       gl4duPushMatrix();
       gl4duTranslatef(0.0f, y, 0.0f);
       // placer le scale en bout de chaine pour éviter qu'il n'agissse sur les translations précédentes
