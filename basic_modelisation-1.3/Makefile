@@ -18,7 +18,7 @@ LDFLAGS = -lm
 # définition des fichiers et dossiers
 PACKNAME = basic
 PROGNAME = modelisation
-VERSION = 1.1
+VERSION = 1.3
 distdir = $(PACKNAME)_$(PROGNAME)-$(VERSION)
 HEADERS = 
 SOURCES = main.c

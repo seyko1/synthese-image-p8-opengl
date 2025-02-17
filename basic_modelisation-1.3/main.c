@@ -28,6 +28,10 @@ int main(int argc, char ** argv) {
 
 void init(void) {
   glClearColor(0.5f, 0.0f, 0.0f, 1.0f);
+
+  SDL_GL_SetSwapInterval(1);
+  glEnable(GL_DEPTH_TEST);
+
   _cubeId = gl4dgGenCubef();
   // Créer un programme shader à partir de hello.vs et hello.fs, qui pourra s'occuper du rendu.
   _pId = gl4duCreateProgram("<vs>shaders/hello.vs", "<fs>shaders/hello.fs", NULL);
@@ -42,8 +46,6 @@ void init(void) {
   GLfloat top    = (1.0f * _wH) / _wW;
   gl4duFrustumf(-1.0f, 1.0f, bottom, top, 1.0f, 100.0f);
 
-  // Afficher le cube en file de fer
-  glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 }
 
 // Renvoyer le delta temps écoulé entre deux appels
@@ -79,7 +81,7 @@ void draw(void) {
   gl4dgDraw(_cubeId);
   glUseProgram(0);
 
-  rot += 2.0f * M_PI * get_dt();
+  rot += 0.5f * M_PI * get_dt();
 }
 
 void sortie(void) {
