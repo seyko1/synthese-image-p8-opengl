@@ -35,7 +35,8 @@ void init(void) {
   _coneId = gl4dgGenConef(3, GL_TRUE);
   // Créer un programme shader à partir de hello.vs et hello.fs, qui pourra s'occuper du rendu.
   _pId = gl4duCreateProgram("<vs>shaders/hello.vs", "<fs>shaders/hello.fs", NULL);
-  gl4duGenMatrix(GL_FLOAT, "modelView");
+  gl4duGenMatrix(GL_FLOAT, "view");
+  gl4duGenMatrix(GL_FLOAT, "model");
 
   // Appliquer une matrice de projection, elle sera envoyé lors de l'appel à sendMatrices()
   gl4duGenMatrix(GL_FLOAT, "projection");
@@ -64,12 +65,15 @@ void draw(void) {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glUseProgram(_pId);
 
-  gl4duBindMatrix("modelView");
+  gl4duBindMatrix("view");
   gl4duLoadIdentityf(); // matrice neutre utilisée pour l'initialisation 
-  
   // -2 sur les z car notre frustum a un near à 1 donc on commence à voir non plus à 0 mais -1 (éloignement)
   // on éloigne à -3 quand on passe à un cube car il a une profondeur (+1 en avant -1 en arrière)
   gl4duTranslatef(0.0f, 0.0f, -3.0f);
+
+
+  gl4duBindMatrix("model");
+  gl4duLoadIdentityf();
   // Convertir rot de radian à degré
   GLfloat angle = 180.0f * rot / M_PI;
   // Rotation autour de l'axe des y 
