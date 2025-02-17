@@ -10,7 +10,7 @@ static void draw(void);
 static void sortie(void);
 
 static GLuint _wW = 640, _wH = 480;
-static GLuint _cubeId = 0;
+static GLuint _coneId = 0;
 static GLuint _pId = 0;
 
 int main(int argc, char ** argv) {
@@ -32,7 +32,7 @@ void init(void) {
   SDL_GL_SetSwapInterval(1);
   glEnable(GL_DEPTH_TEST);
 
-  _cubeId = gl4dgGenCubef();
+  _coneId = gl4dgGenConef(3, GL_TRUE);
   // Créer un programme shader à partir de hello.vs et hello.fs, qui pourra s'occuper du rendu.
   _pId = gl4duCreateProgram("<vs>shaders/hello.vs", "<fs>shaders/hello.fs", NULL);
   gl4duGenMatrix(GL_FLOAT, "modelView");
@@ -69,7 +69,7 @@ void draw(void) {
   
   // -2 sur les z car notre frustum a un near à 1 donc on commence à voir non plus à 0 mais -1 (éloignement)
   // on éloigne à -3 quand on passe à un cube car il a une profondeur (+1 en avant -1 en arrière)
-  gl4duTranslatef(sin(rot), 0.0f, -3.0f);
+  gl4duTranslatef(0.0f, 0.0f, -3.0f);
   // Convertir rot de radian à degré
   GLfloat angle = 180.0f * rot / M_PI;
   // Rotation autour de l'axe des y 
@@ -78,7 +78,7 @@ void draw(void) {
   // Les modifications de matrices doivent être envoyées au GPU avant de dessinner
   gl4duSendMatrices();
 
-  gl4dgDraw(_cubeId);
+  gl4dgDraw(_coneId);
   glUseProgram(0);
 
   rot += 0.5f * M_PI * get_dt();
