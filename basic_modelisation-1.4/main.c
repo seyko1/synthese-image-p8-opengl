@@ -10,6 +10,7 @@ static void draw(void);
 static void sortie(void);
 
 static GLuint _wW = 640, _wH = 480;
+static GLuint _quadId = 0;
 static GLuint _coneId = 0;
 static GLuint _pId = 0;
 
@@ -33,6 +34,7 @@ void init(void) {
   glEnable(GL_DEPTH_TEST);
 
   _coneId = gl4dgGenConef(3, GL_TRUE);
+  _quadId = gl4dgGenQuadf();
   // Créer un programme shader à partir de hello.vs et hello.fs, qui pourra s'occuper du rendu.
   _pId = gl4duCreateProgram("<vs>shaders/hello.vs", "<fs>shaders/hello.fs", NULL);
   gl4duGenMatrix(GL_FLOAT, "view");
@@ -73,7 +75,7 @@ void draw(void) {
   gl4duBindMatrix("model");
   gl4duLoadIdentityf();
   // placer le cone un peu en hauteur
-  gl4duTranslatef(0.0f, 1.0f, 0.0f);
+  gl4duTranslatef(0.0f, 1.5f, 0.0f);
   // Convertir rot de radian à degré
   GLfloat angle = 180.0f * rot / M_PI;
   // Rotation autour de l'axe des y 
@@ -83,6 +85,16 @@ void draw(void) {
   gl4duSendMatrices();
 
   gl4dgDraw(_coneId);
+
+  // réinitaliser les matrices pour modeliser le quad à part
+  gl4duLoadIdentityf();
+  // coucher le quad avec une rotation
+  gl4duRotatef(-90.0f, 1.0f, 0.0f, 0.0f);
+  // agrandir le quad pour un effet de sol
+  gl4duScalef(5.0f, 5.0f, 5.0f);
+  gl4duSendMatrices();
+  gl4dgDraw(_quadId);
+
   glUseProgram(0);
 
   rot += 0.5f * M_PI * get_dt();
