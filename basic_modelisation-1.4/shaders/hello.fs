@@ -3,6 +3,8 @@ out vec4 fragColor;
 
 in float il;
 
+uniform vec4 couleur;
+
 void main() {
-     fragColor = il * vec4(0.0, 0.0, 1.0, 1.0);
+     fragColor = il * couleur;
 }

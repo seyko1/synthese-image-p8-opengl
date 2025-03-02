@@ -28,7 +28,7 @@ int main(int argc, char ** argv) {
 }
 
 void init(void) {
-  glClearColor(0.5f, 0.0f, 0.0f, 1.0f);
+  glClearColor(0.7f, 0.7f, 0.7f, 1.0f);
 
   SDL_GL_SetSwapInterval(1);
   glEnable(GL_DEPTH_TEST);
@@ -63,6 +63,8 @@ static double get_dt(void) {
 }
 
 void draw(void) {
+  static const GLfloat rouge[] = { 0.6f, 0.0f, 0.0f , 1.0f }, bleu[] = { 0.0f, 0.0f, 0.6f, 1.0f };
+
   static GLfloat rot = 0.0f;
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glUseProgram(_pId);
@@ -80,10 +82,9 @@ void draw(void) {
   GLfloat angle = 180.0f * rot / M_PI;
   // Rotation autour de l'axe des y 
   gl4duRotatef(angle, 0.0f, 1.0f, 0.0f); 
-  
   // Les modifications de matrices doivent être envoyées au GPU avant de dessinner
   gl4duSendMatrices();
-
+  glUniform4fv(glGetUniformLocation(_pId, "couleur"), 1, bleu);
   gl4dgDraw(_coneId);
 
   // réinitaliser les matrices pour modeliser le quad à part
@@ -93,6 +94,7 @@ void draw(void) {
   // agrandir le quad pour un effet de sol
   gl4duScalef(5.0f, 5.0f, 5.0f);
   gl4duSendMatrices();
+  glUniform4fv(glGetUniformLocation(_pId, "couleur"), 1, rouge);
   gl4dgDraw(_quadId);
 
   glUseProgram(0);
