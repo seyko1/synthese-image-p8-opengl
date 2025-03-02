@@ -67,13 +67,13 @@ void draw(void) {
 
   gl4duBindMatrix("view");
   gl4duLoadIdentityf(); // matrice neutre utilisée pour l'initialisation 
-  // -2 sur les z car notre frustum a un near à 1 donc on commence à voir non plus à 0 mais -1 (éloignement)
-  // on éloigne à -3 quand on passe à un cube car il a une profondeur (+1 en avant -1 en arrière)
-  gl4duTranslatef(0.0f, 0.0f, -3.0f);
-
+  // Où on est / où on regarde / orientation de la tête
+  gl4duLookAtf(0.0f, 2.0f, 4.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
 
   gl4duBindMatrix("model");
   gl4duLoadIdentityf();
+  // placer le cone un peu en hauteur
+  gl4duTranslatef(0.0f, 1.0f, 0.0f);
   // Convertir rot de radian à degré
   GLfloat angle = 180.0f * rot / M_PI;
   // Rotation autour de l'axe des y 
