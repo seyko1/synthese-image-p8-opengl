@@ -10,15 +10,19 @@ layout(location = 2) in vec2 texCoord;
 // Matrice 4D de translation reçue du CPU
 uniform mat4 model, view, projection;
 
+uniform vec4 lumpos;
+
 out float il;
 
 void main() {
-    // faire bouger les normales relativement au model dans l'espace
-    vec3 n = normalize(transpose(inverse(view * model)) * vec4(normal, 0.0)).xyz;
+    // modéliser le sommet dans la scène
+    vec4 modPos = model * vec4(pos, 1.0);
 
-    vec3 Ld = normalize(vec3(0.0, -0.2, -1.0));
+    vec3 Ld = normalize(modPos.xyz - lumpos.xyz);
+    // faire bouger les normales relativement au model dans l'espace
+    vec3 n = normalize(transpose(inverse(model)) * vec4(normal, 0.0)).xyz;
 
     il = clamp(dot(n, -Ld), 0.0, 1.0);
 
-    gl_Position = projection * view * model * vec4(pos, 1.0);
+    gl_Position = projection * view * modPos;
 }

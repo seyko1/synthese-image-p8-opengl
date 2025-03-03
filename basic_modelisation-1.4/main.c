@@ -63,11 +63,12 @@ static double get_dt(void) {
 }
 
 void draw(void) {
-  static const GLfloat rouge[] = { 0.6f, 0.0f, 0.0f , 1.0f }, bleu[] = { 0.0f, 0.0f, 0.6f, 1.0f };
-
+  static const GLfloat rouge[] = { 0.6f, 0.0f, 0.0f , 1.0f }, bleu[] = { 0.0f, 0.0f, 0.6f, 1.0f },
+  lumpos[] = { -4.0f, 4.0f, 0.0f, 1.0f };
   static GLfloat rot = 0.0f;
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glUseProgram(_pId);
+  glUniform4fv(glGetUniformLocation(_pId, "lumpos"), 1, lumpos);
 
   gl4duBindMatrix("view");
   gl4duLoadIdentityf(); // matrice neutre utilisée pour l'initialisation 
