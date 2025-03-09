@@ -36,7 +36,7 @@ void init(void) {
   _coneId = gl4dgGenConef(3, GL_TRUE);
   _quadId = gl4dgGenQuadf();
   // Créer un programme shader à partir de hello.vs et hello.fs, qui pourra s'occuper du rendu.
-  _pId = gl4duCreateProgram("<vs>shaders/hello.vs", "<fs>shaders/hello.fs", NULL);
+  _pId = gl4duCreateProgram("<vs>shaders/gouraud.vs", "<fs>shaders/gouraud.fs", NULL);
   gl4duGenMatrix(GL_FLOAT, "view");
   gl4duGenMatrix(GL_FLOAT, "model");
 

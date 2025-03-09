@@ -22,7 +22,7 @@ void main() {
     // faire bouger les normales relativement au model dans l'espace
     vec3 n = normalize(transpose(inverse(model)) * vec4(normal, 0.0)).xyz;
 
-    il = clamp(dot(n, -Ld), 0.0, 1.0);
+    il = 2.0 * clamp(dot(n, -Ld), 0.0, 1.0);
 
     gl_Position = projection * view * modPos;
 }
