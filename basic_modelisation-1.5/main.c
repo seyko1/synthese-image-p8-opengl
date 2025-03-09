@@ -63,9 +63,13 @@ static double get_dt(void) {
 }
 
 void draw(void) {
-  static const GLfloat rouge[] = { 0.6f, 0.0f, 0.0f , 1.0f }, bleu[] = { 0.0f, 0.0f, 0.6f, 1.0f },
-  lumpos[] = { -4.0f, 4.0f, 0.0f, 1.0f };
+  static const GLfloat rouge[] = { 0.6f, 0.0f, 0.0f , 1.0f }, bleu[] = { 0.0f, 0.0f, 0.6f, 1.0f };
+  
   static GLfloat rot = 0.0f;
+  GLfloat lumpos[] = { -4.0f, 4.0f, 0.0f, 1.0f };
+  // variation entre 3.9 et 0.1
+  lumpos[1] = 2.0f + 1.9f * sin(rot);
+  
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glUseProgram(_pId);
   glUniform4fv(glGetUniformLocation(_pId, "lumpos"), 1, lumpos);
