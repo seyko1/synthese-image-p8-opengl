@@ -12,17 +12,15 @@ uniform mat4 model, view, projection;
 
 uniform vec4 lumpos;
 
-out float il;
+out vec4 modPos;
+out vec3 modNormal;
 
 void main() {
     // modéliser le sommet dans la scène
-    vec4 modPos = model * vec4(pos, 1.0);
+    modPos = model * vec4(pos, 1.0);
 
-    vec3 Ld = normalize(modPos.xyz - lumpos.xyz);
     // faire bouger les normales relativement au model dans l'espace
-    vec3 n = normalize(transpose(inverse(model)) * vec4(normal, 0.0)).xyz;
-
-    il = 2.0 * clamp(dot(n, -Ld), 0.0, 1.0);
+    modNormal = normalize(transpose(inverse(model)) * vec4(normal, 0.0)).xyz;
 
     gl_Position = projection * view * modPos;
 }
