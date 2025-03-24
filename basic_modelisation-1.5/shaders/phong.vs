@@ -10,8 +10,6 @@ layout(location = 2) in vec2 texCoord;
 // Matrice 4D de translation reçue du CPU
 uniform mat4 model, view, projection;
 
-uniform vec4 lumpos;
-
 out vec4 modPos;
 out vec3 modNormal;
 
