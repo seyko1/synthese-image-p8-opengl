@@ -23,5 +23,5 @@ void main() {
 
     gl_Position = projection * view * modPos;
 
-    tCoord = texCoord;
+    tCoord = vec2(10 * texCoord.x, 5 * texCoord.y);
 }
