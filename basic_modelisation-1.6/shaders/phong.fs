@@ -13,10 +13,7 @@ uniform sampler2D tex;
 uniform int useTex;
 
 void main() {
-     if (useTex == 1) {
-        fragColor = texture(tex, tCoord);
-        return;
-     }
+     vec4 lighting;
 
      /* Etape 1 - Calcul et application de l'intensité de la lumière (lumière diffuse) à 85% */
 
@@ -24,7 +21,7 @@ void main() {
      
      float lightIntensity = 2.0 * clamp(dot(modNormal, -directionalLightVector), 0.0, 1.0);
 
-     fragColor = 0.85 * lightIntensity * couleur;
+     lighting = 0.85 * lightIntensity * couleur;
 
      /* Etape 2 - Calcul et application du reflet de la lumière (lumière spéculaire) */
 
@@ -46,10 +43,16 @@ void main() {
      specularIntensity = pow(specularIntensity, 10.0);
 
      // La lumière spéculaire (blanche) vient s'ajouter (avec une intensité variable) à la lumière diffuse
-     fragColor += specularIntensity * vec4(1.0);
+     lighting += specularIntensity * vec4(1.0);
 
      /* Etape 3 - Ajout d'une lumière ambiante à 15% */
      const vec4 ambiantLight = vec4(0.0, 1.0, 0.0, 1.0);
 
-     fragColor += 0.15 * ambiantLight;
+     lighting += 0.15 * ambiantLight;
+     
+     if (useTex == 1) {
+        fragColor = mix(lighting, texture(tex, tCoord), 0.5);
+     } else {
+        fragColor = lighting;
+     }
 }
