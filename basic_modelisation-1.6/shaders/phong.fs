@@ -3,13 +3,21 @@ out vec4 fragColor;
 
 in vec4 modPos;
 in vec3 modNormal;
+in vec2 tCoord;
 
 uniform vec4 lumpos;
 uniform vec4 couleur;
 // on aura besoin de la matrice view pour modifier le vecteur reflet
 uniform mat4 view;
+uniform sampler2D tex;
+uniform int useTex;
 
 void main() {
+     if (useTex == 1) {
+        fragColor = texture(tex, tCoord);
+        return;
+     }
+
      /* Etape 1 - Calcul et application de l'intensité de la lumière (lumière diffuse) à 85% */
 
      vec3 directionalLightVector = normalize(modPos.xyz - lumpos.xyz);

@@ -12,6 +12,7 @@ uniform mat4 model, view, projection;
 
 out vec4 modPos;
 out vec3 modNormal;
+out vec2 tCoord;
 
 void main() {
     // modéliser le sommet dans la scène
@@ -21,4 +22,6 @@ void main() {
     modNormal = normalize(transpose(inverse(model)) * vec4(normal, 0.0)).xyz;
 
     gl_Position = projection * view * modPos;
+
+    tCoord = texCoord;
 }

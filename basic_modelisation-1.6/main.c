@@ -13,6 +13,7 @@ static GLuint _wW = 640, _wH = 480;
 static GLuint _quadId = 0;
 static GLuint _coneId = 0;
 static GLuint _pId = 0;
+static GLuint _texId = 0;
 
 int main(int argc, char ** argv) {
   if(!gl4duwCreateWindow(argc, argv, "Ateliers API8 - modélisation", GL4DW_POS_CENTERED, GL4DW_POS_CENTERED,
@@ -28,6 +29,9 @@ int main(int argc, char ** argv) {
 }
 
 void init(void) {
+  // Mini texture de 4 texels (noir, blanc, blanc, rouge)
+  GLuint p[] = { 0, -1, -1, (255 << 24) | 255 };
+
   glClearColor(0.7f, 0.7f, 0.7f, 1.0f);
 
   SDL_GL_SetSwapInterval(1);
@@ -49,6 +53,17 @@ void init(void) {
   GLfloat top    = (1.0f * _wH) / _wW;
   gl4duFrustumf(-1.0f, 1.0f, bottom, top, 1.0f, 100.0f);
 
+  glGenTextures(1, &_texId);
+  assert(_texId);
+
+  glBindTexture(GL_TEXTURE_2D, _texId);
+
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 2, 2, 0, GL_RGBA, GL_UNSIGNED_BYTE, p);
+
+  glBindTexture(GL_TEXTURE_2D, 0);
 }
 
 // Renvoyer le delta temps écoulé entre deux appels
@@ -90,6 +105,7 @@ void draw(void) {
   // Les modifications de matrices doivent être envoyées au GPU avant de dessinner
   gl4duSendMatrices();
   glUniform4fv(glGetUniformLocation(_pId, "couleur"), 1, bleu);
+  glUniform1i(glGetUniformLocation(_pId, "useTex"), 0);
   gl4dgDraw(_coneId);
 
   // réinitaliser les matrices pour modeliser le quad à part
@@ -100,7 +116,15 @@ void draw(void) {
   gl4duScalef(5.0f, 5.0f, 5.0f);
   gl4duSendMatrices();
   glUniform4fv(glGetUniformLocation(_pId, "couleur"), 1, rouge);
+  
+  glActiveTexture(GL_TEXTURE0);
+  glUniform1i(glGetUniformLocation(_pId, "tex"), 0);
+  glUniform1i(glGetUniformLocation(_pId, "useTex"), 1);
+  glBindTexture(GL_TEXTURE_2D, _texId);
+  
   gl4dgDraw(_quadId);
+  
+  glBindTexture(GL_TEXTURE_2D, 0);
 
   glUseProgram(0);
 
@@ -108,5 +132,9 @@ void draw(void) {
 }
 
 void sortie(void) {
+  if (_texId) {
+    glDeleteTextures(1, &_texId);
+    _texId = 0;
+  }
   gl4duClean(GL4DU_ALL);
 }
