@@ -26,7 +26,7 @@ MSVCSRC = $(patsubst %,<ClCompile Include=\"%\\\" \\/>,$(SOURCES))
 OBJ = $(SOURCES:.c=.o)
 DOXYFILE = documentation/Doxyfile
 VSCFILES = $(PROGNAME).vcxproj $(PROGNAME).sln
-EXTRAFILES = COPYING $(wildcard shaders/*.?s images/*.png) $(VSCFILES)
+EXTRAFILES = COPYING $(wildcard shaders/*.?s images/*.png images/*.jpg) $(VSCFILES)
 DISTFILES = $(SOURCES) Makefile $(HEADERS) $(DOXYFILE) $(EXTRAFILES)
 # Traitements automatiques pour ajout de chemins et options (ne pas modifier)
 ifneq (,$(shell ls -d /usr/local/include 2>/dev/null | tail -n 1))
@@ -49,7 +49,7 @@ else
         LDFLAGS += -lGL
 endif
 CPPFLAGS += $(shell sdl2-config --cflags)
-LDFLAGS  += -lGL4Dummies $(shell sdl2-config --libs)
+LDFLAGS  += -lGL4Dummies $(shell sdl2-config --libs) -lSDL2_image
 all: $(PROGNAME)
 $(PROGNAME): $(OBJ)
 	$(CC) $(OBJ) $(LDFLAGS) -o $(PROGNAME)

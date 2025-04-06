@@ -2,6 +2,7 @@
 #include <GL4D/gl4dg.h>
 #include <stdio.h>
 #include <math.h>
+#include <SDL_image.h>
 
 static void init(void);
 /* TODO : gérer le retaillage de la fenêtre */
@@ -13,7 +14,7 @@ static GLuint _wW = 640, _wH = 480;
 static GLuint _quadId = 0;
 static GLuint _coneId = 0;
 static GLuint _pId = 0;
-static GLuint _texId = 0;
+static GLuint _texId[2] = { 0 };
 
 int main(int argc, char ** argv) {
   if(!gl4duwCreateWindow(argc, argv, "Ateliers API8 - modélisation", GL4DW_POS_CENTERED, GL4DW_POS_CENTERED,
@@ -29,8 +30,7 @@ int main(int argc, char ** argv) {
 }
 
 void init(void) {
-  // Mini texture de 4 texels (noir, blanc, blanc, rouge)
-  GLuint p[] = { 0, -1, -1, (255 << 24) | 255 };
+  SDL_Surface * s = NULL;
 
   glClearColor(0.7f, 0.7f, 0.7f, 1.0f);
 
@@ -53,15 +53,39 @@ void init(void) {
   GLfloat top    = (1.0f * _wH) / _wW;
   gl4duFrustumf(-1.0f, 1.0f, bottom, top, 1.0f, 100.0f);
 
-  glGenTextures(1, &_texId);
-  assert(_texId);
+  /* 8 (taille en octet du tableau) / 4 (taille du premier élément) */
+  glGenTextures(sizeof _texId / sizeof *_texId, _texId);
+  assert(_texId[0] && _texId[1]);
 
-  glBindTexture(GL_TEXTURE_2D, _texId);
-
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 2, 2, 0, GL_RGBA, GL_UNSIGNED_BYTE, p);
+  // texture pyramide
+  glBindTexture(GL_TEXTURE_2D, _texId[0]);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+  s = IMG_Load("images/pyramide.jpg");
+  if (s != NULL) {
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, s->w, s->h, 0, GL_RGB, GL_UNSIGNED_BYTE, s->pixels);
+    SDL_FreeSurface(s);
+  } else {
+    GLuint p = { (0xFF << 24) | 0xFF }; 
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, &p);
+  }
+  
+  // texture sol
+  glBindTexture(GL_TEXTURE_2D, _texId[1]);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+  s = IMG_Load("images/sol.png");
+  if (s != NULL) {
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, s->w, s->h, 0, GL_RGB, GL_UNSIGNED_BYTE, s->pixels);
+    SDL_FreeSurface(s);
+  } else {
+    GLuint p = { (0xFF << 24) | 0xFF }; 
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, &p);
+  }
 
   glBindTexture(GL_TEXTURE_2D, 0);
 }
@@ -105,7 +129,10 @@ void draw(void) {
   // Les modifications de matrices doivent être envoyées au GPU avant de dessinner
   gl4duSendMatrices();
   glUniform4fv(glGetUniformLocation(_pId, "couleur"), 1, bleu);
-  glUniform1i(glGetUniformLocation(_pId, "useTex"), 0);
+  glActiveTexture(GL_TEXTURE0);
+  glUniform1i(glGetUniformLocation(_pId, "tex"), 0);
+  glBindTexture(GL_TEXTURE_2D, _texId[0]);
+  glUniform1i(glGetUniformLocation(_pId, "useTex"), 1);
   gl4dgDraw(_coneId);
 
   // réinitaliser les matrices pour modeliser le quad à part
@@ -120,7 +147,7 @@ void draw(void) {
   glActiveTexture(GL_TEXTURE0);
   glUniform1i(glGetUniformLocation(_pId, "tex"), 0);
   glUniform1i(glGetUniformLocation(_pId, "useTex"), 1);
-  glBindTexture(GL_TEXTURE_2D, _texId);
+  glBindTexture(GL_TEXTURE_2D, _texId[1]);
   
   gl4dgDraw(_quadId);
   
@@ -132,9 +159,9 @@ void draw(void) {
 }
 
 void sortie(void) {
-  if (_texId) {
-    glDeleteTextures(1, &_texId);
-    _texId = 0;
+  if (_texId[0]) {
+    glDeleteTextures(sizeof _texId / sizeof *_texId, _texId);
+    _texId[0] = 0;
   }
   gl4duClean(GL4DU_ALL);
 }
