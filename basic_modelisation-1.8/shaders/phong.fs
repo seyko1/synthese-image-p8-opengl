@@ -10,23 +10,32 @@ uniform vec4 couleur;
 // on aura besoin de la matrice view pour modifier le vecteur reflet
 uniform mat4 view;
 uniform sampler2D tex;
+uniform sampler2D nm;
 uniform int useTex;
+uniform int useNm;
 
 void main() {
      vec4 lighting;
+       
+     vec3 N = modNormal;
+
+     if (useNm == 1) {
+      // passer l échelle [0;1] de la normal map à une échelle [-1;1]
+      N = (texture(nm, tCoord).rbg - vec3(0.5)) * 2.0;
+     }
 
      /* Etape 1 - Calcul et application de l'intensité de la lumière (lumière diffuse) à 85% */
 
      vec3 directionalLightVector = normalize(modPos.xyz - lumpos.xyz);
      
-     float lightIntensity = 2.0 * clamp(dot(modNormal, -directionalLightVector), 0.0, 1.0);
+     float lightIntensity = 2.0 * clamp(dot(N, -directionalLightVector), 0.0, 1.0);
 
      lighting = 0.85 * lightIntensity * couleur;
 
      /* Etape 2 - Calcul et application du reflet de la lumière (lumière spéculaire) */
 
      // Déduire le vecteur reflet
-     vec3 reflectVector = reflect(directionalLightVector, modNormal);
+     vec3 reflectVector = reflect(directionalLightVector, N);
 
      // formule magique pour extraire et appliquer les rotations stockées dans view au vecteur de reflet
      reflectVector = normalize((transpose(inverse(view)) * vec4(reflectVector, 0.0)).xyz);
@@ -42,8 +51,8 @@ void main() {
      // On veut une valeur qui montre en flêche lorsqu'elle est proche de 1.
      specularIntensity = pow(specularIntensity, 10.0);
 
-     // La lumière spéculaire (blanche) vient s'ajouter (avec une intensité variable) à la lumière diffuse
-     lighting += specularIntensity * vec4(1.0);
+     // La lumière spéculaire (jaune) vient s'ajouter (avec une intensité variable) à la lumière diffuse
+     lighting += specularIntensity * vec4(1.0, 1.0, 0.0, 1.0);
 
      /* Etape 3 - Ajout d'une lumière ambiante à 15% */
      const vec4 ambiantLight = vec4(0.0, 1.0, 0.0, 1.0);

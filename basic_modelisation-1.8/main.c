@@ -9,12 +9,13 @@ static void init(void);
 /* static void resize(int width, int height); */
 static void draw(void);
 static void sortie(void);
+static void apply_default_tex(void);
 
-static GLuint _wW = 640, _wH = 480;
+static GLuint _wW = 1024, _wH = 768;
 static GLuint _quadId = 0;
 static GLuint _coneId = 0;
 static GLuint _pId = 0;
-static GLuint _texId[2] = { 0 };
+static GLuint _texId[3] = { 0 };
 
 int main(int argc, char ** argv) {
   if(!gl4duwCreateWindow(argc, argv, "Ateliers API8 - modélisation", GL4DW_POS_CENTERED, GL4DW_POS_CENTERED,
@@ -68,23 +69,35 @@ void init(void) {
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, s->w, s->h, 0, GL_RGB, GL_UNSIGNED_BYTE, s->pixels);
     SDL_FreeSurface(s);
   } else {
-    GLuint p = { (0xFF << 24) | 0xFF }; 
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, &p);
+    apply_default_tex();
   }
-  
+
   // texture sol
   glBindTexture(GL_TEXTURE_2D, _texId[1]);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-  s = IMG_Load("images/sol.png");
+  s = IMG_Load("images/sol.jpg");
   if (s != NULL) {
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, s->w, s->h, 0, GL_RGB, GL_UNSIGNED_BYTE, s->pixels);
     SDL_FreeSurface(s);
   } else {
-    GLuint p = { (0xFF << 24) | 0xFF }; 
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, &p);
+    apply_default_tex();
+  }
+
+  // texture sol normal map
+  glBindTexture(GL_TEXTURE_2D, _texId[2]);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+  glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+  s = IMG_Load("images/sol_nm.jpg");
+  if (s != NULL) {
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, s->w, s->h, 0, GL_RGB, GL_UNSIGNED_BYTE, s->pixels);
+    SDL_FreeSurface(s);
+  } else {
+    apply_default_tex();  
   }
 
   glBindTexture(GL_TEXTURE_2D, 0);
@@ -99,6 +112,11 @@ static double get_dt(void) {
   double dt = (t - t0) / 1000.0f;
   t0 = t;
   return dt;
+}
+
+static void apply_default_tex(void) {
+  GLuint p = { (0xFF << 24) | 0xFF }; 
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGB, GL_UNSIGNED_BYTE, &p);
 }
 
 void draw(void) {
@@ -116,7 +134,7 @@ void draw(void) {
   gl4duBindMatrix("view");
   gl4duLoadIdentityf(); // matrice neutre utilisée pour l'initialisation 
   // Où on est / où on regarde / orientation de la tête
-  gl4duLookAtf(0.0f, 2.0f, 4.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+  gl4duLookAtf(0.0f, 2.0f, 6.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
 
   gl4duBindMatrix("model");
   gl4duLoadIdentityf();
@@ -133,6 +151,7 @@ void draw(void) {
   glUniform1i(glGetUniformLocation(_pId, "tex"), 0);
   glBindTexture(GL_TEXTURE_2D, _texId[0]);
   glUniform1i(glGetUniformLocation(_pId, "useTex"), 1);
+  glUniform1i(glGetUniformLocation(_pId, "useNm"), 0);
   gl4dgDraw(_coneId);
 
   // réinitaliser les matrices pour modeliser le quad à part
@@ -144,10 +163,15 @@ void draw(void) {
   gl4duSendMatrices();
   glUniform4fv(glGetUniformLocation(_pId, "couleur"), 1, rouge);
   
+  // utilisation de la texture sol et de sa normal map
+  glActiveTexture(GL_TEXTURE0 + 1);
+  glBindTexture(GL_TEXTURE_2D, _texId[2]);
   glActiveTexture(GL_TEXTURE0);
-  glUniform1i(glGetUniformLocation(_pId, "tex"), 0);
-  glUniform1i(glGetUniformLocation(_pId, "useTex"), 1);
   glBindTexture(GL_TEXTURE_2D, _texId[1]);
+  glUniform1i(glGetUniformLocation(_pId, "tex"), 0);
+  glUniform1i(glGetUniformLocation(_pId, "nm"), 1);
+  glUniform1i(glGetUniformLocation(_pId, "useTex"), 1);
+  glUniform1i(glGetUniformLocation(_pId, "useNm"), 1);
   
   gl4dgDraw(_quadId);
   
