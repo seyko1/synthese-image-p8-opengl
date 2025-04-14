@@ -151,7 +151,7 @@ void draw(void) {
   glUniform1i(glGetUniformLocation(_pId, "tex"), 0);
   glBindTexture(GL_TEXTURE_2D, _texId[0]);
   glUniform1i(glGetUniformLocation(_pId, "useTex"), 1);
-  glUniform1i(glGetUniformLocation(_pId, "useNm"), 0);
+  glUniform1i(glGetUniformLocation(_pId, "useNm"), 1);
   gl4dgDraw(_coneId);
 
   // réinitaliser les matrices pour modeliser le quad à part
