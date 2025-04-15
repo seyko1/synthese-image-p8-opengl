@@ -15,6 +15,11 @@ uniform int useTex;
 uniform int useNm;
 
 void main() {
+     fragColor = texture(tex, tCoord);
+     return;
+     
+     /* dead code to remove
+
      vec4 lighting;
        
      vec3 N = modNormal;
@@ -64,4 +69,6 @@ void main() {
      } else {
         fragColor = lighting;
      }
+
+     */
 }

@@ -50,19 +50,20 @@ void init(void) {
   
   GLfloat bottom = (-1.0f * _wH) / _wW;
   GLfloat top    = (1.0f * _wH) / _wW;
-  gl4duFrustumf(-1.0f, 1.0f, bottom, top, 1.0f, 100.0f);
+  // gl4duFrustumf(-1.0f, 1.0f, bottom, top, 1.0f, 100.0f);
 
   /* 8 (taille en octet du tableau) / 4 (taille du premier élément) */
   glGenTextures(sizeof _texId / sizeof *_texId, _texId);
   assert(_texId[0]);
 
   // texture
+  GLuint p = { (0xFF << 24) | 0xFF };
   glBindTexture(GL_TEXTURE_2D, _texId[0]);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, 1, 1, 0, GL_RGBA, GL_UNSIGNED_BYTE, &p);
 
   glBindTexture(GL_TEXTURE_2D, 0);
 }
@@ -100,7 +101,7 @@ void draw(void) {
   gl4dgDraw(_quadId);
 
   glUseProgram(0);
-
+ 
   rot += 0.5f * M_PI * get_dt();
 }
 
