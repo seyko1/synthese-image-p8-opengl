@@ -12,7 +12,7 @@ static void init(void);
 static void draw(void);
 static void sortie(void);
 
-static GLuint _wW = 1024, _wH = 768;
+static GLuint _wW = 800, _wH = 460;
 static GLuint _quadId = 0;
 static GLuint _pId = 0;
 static GLuint _texId[1] = { 0 };

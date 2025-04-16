@@ -15,7 +15,12 @@ uniform int useTex;
 uniform int useNm;
 
 void main() {
-     fragColor = texture(tex, tCoord);
+     vec4 c = texture(tex, tCoord);
+     if (length(c.rgb) > 0.0) {
+      fragColor = c;
+     } else {
+      discard;
+     }
      return;
      
      /* dead code to remove
