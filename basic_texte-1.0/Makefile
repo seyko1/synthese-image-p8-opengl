@@ -49,7 +49,7 @@ else
         LDFLAGS += -lGL
 endif
 CPPFLAGS += $(shell sdl2-config --cflags)
-LDFLAGS  += -lGL4Dummies $(shell sdl2-config --libs) -lSDL2_image
+LDFLAGS  += -lGL4Dummies $(shell sdl2-config --libs) -lSDL2_image -lSDL2_ttf
 all: $(PROGNAME)
 $(PROGNAME): $(OBJ)
 	$(CC) $(OBJ) $(LDFLAGS) -o $(PROGNAME)

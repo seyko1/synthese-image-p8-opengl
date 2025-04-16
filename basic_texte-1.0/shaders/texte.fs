@@ -29,7 +29,7 @@ void main() {
       N = (texture(nm, tCoord).rbg - vec3(0.5)) * 2.0;
      }
 
-     /* Etape 1 - Calcul et application de l'intensité de la lumière (lumière diffuse) à 85% */
+     // Etape 1 - Calcul et application de l'intensité de la lumière (lumière diffuse) à 85%
 
      vec3 directionalLightVector = normalize(modPos.xyz - lumpos.xyz);
      
@@ -37,7 +37,7 @@ void main() {
 
      lighting = 0.85 * lightIntensity * couleur;
 
-     /* Etape 2 - Calcul et application du reflet de la lumière (lumière spéculaire) */
+     // Etape 2 - Calcul et application du reflet de la lumière (lumière spéculaire)
 
      // Déduire le vecteur reflet
      vec3 reflectVector = reflect(directionalLightVector, N);
@@ -59,7 +59,7 @@ void main() {
      // La lumière spéculaire (jaune) vient s'ajouter (avec une intensité variable) à la lumière diffuse
      lighting += specularIntensity * vec4(1.0, 1.0, 0.0, 1.0);
 
-     /* Etape 3 - Ajout d'une lumière ambiante à 15% */
+     // Etape 3 - Ajout d'une lumière ambiante à 15%
      const vec4 ambiantLight = vec4(0.0, 1.0, 0.0, 1.0);
 
      lighting += 0.15 * ambiantLight;
@@ -69,6 +69,5 @@ void main() {
      } else {
         fragColor = lighting;
      }
-
      */
 }
