@@ -71,9 +71,18 @@ void draw(void) {
   glUseProgram(_pId);
   glUniform1f(glGetUniformLocation(_pId, "weight"), 1.1);
   gl4dgDraw(_sphereId);
-  // debind fbo -> rebind l ecran
-  glBindFramebuffer(GL_FRAMEBUFFER, 0);
   glUseProgram(0);
+
+  // debind fbo -> rebind l ecran en écriture pour indiquer que l'écran est la source
+  glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
+
+  glBlitFramebuffer(
+    0, 0, _wW - 1, _wH -1,
+    0, 0, _wW - 1, _wH -1,
+    GL_COLOR_BUFFER_BIT, GL_NEAREST
+  );
+
+  glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 void sortie(void) {
