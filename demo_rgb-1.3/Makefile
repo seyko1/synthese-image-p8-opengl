@@ -21,12 +21,12 @@ PROGNAME = rgb
 VERSION = 1.4
 distdir = $(PACKNAME)_$(PROGNAME)-$(VERSION)
 HEADERS = animations.h audioHelper.h
-SOURCES = animations.c audioHelper.c window.c spectre.c nm.c
+SOURCES = animations.c audioHelper.c window.c spectre.c nm.c texte.c
 MSVCSRC = $(patsubst %,<ClCompile Include=\"%\\\" \\/>,$(SOURCES))
 OBJ = $(SOURCES:.c=.o)
 DOXYFILE = documentation/Doxyfile
 VSCFILES = $(PROGNAME).vcxproj $(PROGNAME).sln
-EXTRAFILES = COPYING $(wildcard shaders/*.?s images/*) $(VSCFILES) takeonme.mod
+EXTRAFILES = COPYING $(wildcard shaders/*.?s images/*) $(VSCFILES) takeonme.mod DejaVuSans-Bold.ttf
 DISTFILES = $(SOURCES) Makefile $(HEADERS) $(DOXYFILE) $(EXTRAFILES)
 # Traitements automatiques pour ajout de chemins et options (ne pas modifier)
 ifneq (,$(shell ls -d /usr/local/include 2>/dev/null | tail -n 1))
@@ -49,7 +49,7 @@ else
         LDFLAGS += -lGL
 endif
 CPPFLAGS += $(shell sdl2-config --cflags)
-LDFLAGS  += -lGL4Dummies $(shell sdl2-config --libs) -lSDL2_mixer -lSDL2_image
+LDFLAGS  += -lGL4Dummies $(shell sdl2-config --libs) -lSDL2_mixer -lSDL2_image -lSDL2_ttf
 all: $(PROGNAME)
 $(PROGNAME): $(OBJ)
 	$(CC) $(OBJ) $(LDFLAGS) -o $(PROGNAME)
