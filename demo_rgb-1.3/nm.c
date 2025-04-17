@@ -1,5 +1,6 @@
 #include <GL4D/gl4duw_SDL2.h>
 #include <GL4D/gl4dg.h>
+#include <GL4D/gl4dh.h>
 #include <stdio.h>
 #include <math.h>
 #include <SDL_image.h>
@@ -17,31 +18,35 @@ static GLuint _coneId = 0;
 static GLuint _pId = 0;
 static GLuint _texId[3] = { 0 };
 
-int main(int argc, char ** argv) {
-  if(!gl4duwCreateWindow(argc, argv, "Ateliers API8 - modélisation", GL4DW_POS_CENTERED, GL4DW_POS_CENTERED,
-			 _wW, _wH, GL4DW_OPENGL | GL4DW_RESIZABLE | GL4DW_SHOWN)) {
-    fprintf(stderr, "Erreur lors de la création de la fenêtre\n");
-    return 1;
+void nm(int state) {
+  /* INITIALISEZ VOS VARIABLES */
+  /* ... */
+  switch(state) {
+  case GL4DH_INIT:
+    /* INITIALISEZ VOTRE ANIMATION (SES VARIABLES <STATIC>s) */
+    init();
+    return;
+  case GL4DH_FREE:
+    /* LIBERER LA MEMOIRE UTILISEE PAR LES <STATIC>s */
+    sortie();
+    return;
+  case GL4DH_UPDATE_WITH_AUDIO:
+    /* METTRE A JOUR VOTRE ANIMATION EN FONCTION DU SON */
+    return;
+  default: /* GL4DH_DRAW */
+    /* JOUER L'ANIMATION */
+    draw();
+    return;
   }
-  init();
-  atexit(sortie);
-  gl4duwDisplayFunc(draw);
-  gl4duwMainLoop();
-  return 0;
 }
 
 void init(void) {
   SDL_Surface * s = NULL;
 
-  glClearColor(0.7f, 0.7f, 0.7f, 1.0f);
-
-  SDL_GL_SetSwapInterval(1);
-  glEnable(GL_DEPTH_TEST);
-
   _coneId = gl4dgGenConef(3, GL_TRUE);
   _quadId = gl4dgGenQuadf();
   // Créer un programme shader à partir de hello.vs et hello.fs, qui pourra s'occuper du rendu.
-  _pId = gl4duCreateProgram("<vs>shaders/phong.vs", "<fs>shaders/phong.fs", NULL);
+  _pId = gl4duCreateProgram("<vs>shaders/nm.vs", "<fs>shaders/nm.fs", NULL);
   gl4duGenMatrix(GL_FLOAT, "view");
   gl4duGenMatrix(GL_FLOAT, "model");
 
@@ -127,6 +132,9 @@ void draw(void) {
   // variation entre 3.9 et 0.1
   lumpos[1] = 2.0f + 1.9f * sin(rot);
   
+  GLboolean depthTestEnable = glIsEnabled(GL_DEPTH_TEST);
+  glEnable(GL_DEPTH_TEST);
+  glClearColor(0.7f, 0.7f, 0.7f, 1.0f);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glUseProgram(_pId);
   glUniform4fv(glGetUniformLocation(_pId, "lumpos"), 1, lumpos);
@@ -180,6 +188,10 @@ void draw(void) {
   glUseProgram(0);
 
   rot += 0.5f * M_PI * get_dt();
+
+  if (!depthTestEnable) {
+    glDisable(GL_DEPTH_TEST);
+  }
 }
 
 void sortie(void) {
@@ -187,5 +199,4 @@ void sortie(void) {
     glDeleteTextures(sizeof _texId / sizeof *_texId, _texId);
     _texId[0] = 0;
   }
-  gl4duClean(GL4DU_ALL);
 }

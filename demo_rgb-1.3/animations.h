@@ -28,6 +28,9 @@ extern "C" {
   // Dans spectre.c
   extern void spectre(int state);
 
+  // Dans nm.c
+  extern void nm(int state);
+
 #ifdef __cplusplus
 }
 #endif
