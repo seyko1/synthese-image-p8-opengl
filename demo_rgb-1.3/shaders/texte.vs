@@ -8,7 +8,7 @@ layout(location = 1) in vec3 normal;
 layout(location = 2) in vec2 texCoord;
 
 // Matrice 4D de translation reçue du CPU
-uniform mat4 model, view, projection;
+uniform mat4 model, view, projection_ttf;
 
 out vec4 modPos;
 out vec3 modNormal;
@@ -21,7 +21,7 @@ void main() {
     // faire bouger les normales relativement au model dans l'espace
     modNormal = normalize(transpose(inverse(model)) * vec4(normal, 0.0)).xyz;
 
-    gl_Position = projection * view * modPos;
+    gl_Position = projection_ttf * view * modPos;
 
     tCoord = vec2(texCoord.x, (-1 * texCoord.y));
 }

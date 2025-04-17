@@ -1,6 +1,7 @@
 #include <GL4D/gl4duw_SDL2.h>
 #include <GL4D/gl4dg.h>
 #include <GL4D/gl4dp.h>
+#include <GL4D/gl4dh.h>
 #include <stdio.h>
 #include <math.h>
 #include <SDL_image.h>
@@ -17,28 +18,32 @@ static GLuint _quadId = 0;
 static GLuint _pId = 0;
 static GLuint _texId[1] = { 0 };
 
-int main(int argc, char ** argv) {
-  if(!gl4duwCreateWindow(argc, argv, "Ateliers API8 - Afficher du texte", GL4DW_POS_CENTERED, GL4DW_POS_CENTERED,
-			 _wW, _wH, GL4DW_OPENGL | GL4DW_RESIZABLE | GL4DW_SHOWN)) {
-    fprintf(stderr, "Erreur lors de la création de la fenêtre\n");
-    return 1;
+void texte(int state) {
+  /* INITIALISEZ VOS VARIABLES */
+  /* ... */
+  switch(state) {
+  case GL4DH_INIT:
+    /* INITIALISEZ VOTRE ANIMATION (SES VARIABLES <STATIC>s) */
+    init();
+    return;
+  case GL4DH_FREE:
+    /* LIBERER LA MEMOIRE UTILISEE PAR LES <STATIC>s */
+    sortie();
+    return;
+  case GL4DH_UPDATE_WITH_AUDIO:
+    /* METTRE A JOUR VOTRE ANIMATION EN FONCTION DU SON */
+    return;
+  default: /* GL4DH_DRAW */
+    /* JOUER L'ANIMATION */
+    draw();
+    return;
   }
-  init();
-  atexit(sortie);
-  gl4duwDisplayFunc(draw);
-  gl4duwMainLoop();
-  return 0;
 }
 
 void init(void) {
   SDL_Surface * gl_surface = NULL, * ttf_surface = NULL;
   TTF_Font * font = NULL;
-  SDL_Color color = { 255, 255, 0, 255 };
-
-  glClearColor(0.7f, 0.7f, 0.7f, 1.0f);
-
-  SDL_GL_SetSwapInterval(1);
-  // glEnable(GL_DEPTH_TEST);
+  SDL_Color color = { 105, 55, 0, 255 };
 
   _quadId = gl4dgGenQuadf();
   // Créer un programme shader à partir de hello.vs et hello.fs, qui pourra s'occuper du rendu.
@@ -96,15 +101,10 @@ void init(void) {
 
   gl4duGenMatrix(GL_FLOAT, "view");
   gl4duGenMatrix(GL_FLOAT, "model");
-  gl4duGenMatrix(GL_FLOAT, "projection");
+  gl4duGenMatrix(GL_FLOAT, "projection_ttf");
   
-  gl4duBindMatrix("projection");
+  gl4duBindMatrix("projection_ttf");
   gl4duLoadIdentityf();
-  
-  // GLfloat bottom = (-1.0f * _wH) / _wW;
-  // GLfloat top    = (1.0f * _wH) / _wW;
-  // gl4duFrustumf(-1.0f, 1.0f, bottom, top, 1.0f, 100.0f);
-
 }
 
 // Renvoyer le delta temps écoulé entre deux appels
@@ -121,6 +121,7 @@ static double get_dt(void) {
 void draw(void) {
   static GLfloat rot = 0.0f;
   
+  glClearColor(0.1f, 0.7f, 0.7f, 1.0f);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glUseProgram(_pId);
 
@@ -149,5 +150,4 @@ void sortie(void) {
     glDeleteTextures(sizeof _texId / sizeof *_texId, _texId);
     _texId[0] = 0;
   }
-  gl4duClean(GL4DU_ALL);
 }

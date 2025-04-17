@@ -28,8 +28,11 @@ static void keydown(int keycode);
  * NULL} */
 static GL4DHanime _animations[] = {
   { 3000, rouge, NULL, NULL },
-  { 2000, rouge, vert, fondu },
+  { 2000, rouge, texte, fondu },
 
+  { 3000, texte, NULL, NULL },
+  { 2000, texte, vert, fondu },
+  
   { 3000, vert, NULL, NULL },
   { 2000, vert, nm, fondu },
   

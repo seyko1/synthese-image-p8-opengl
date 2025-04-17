@@ -30,6 +30,9 @@ extern "C" {
 
   // Dans nm.c
   extern void nm(int state);
+  
+  // Dans texte.c
+  extern void texte(int state);
 
 #ifdef __cplusplus
 }
