@@ -11,7 +11,9 @@ static void sortie(void);
 
 static GLuint _wW = 640, _wH = 480;
 static GLuint _sphereId = 0;
+static GLuint _quadId = 0;
 static GLuint _pId = 0;
+static GLuint _pId_conv = 0;
 static GLuint _fbo = 0;
 static GLuint _tex = 0;
 
@@ -31,8 +33,10 @@ int main(int argc, char ** argv) {
 void init(void) {
   glClearColor(0.5f, 0.0f, 0.0f, 1.0f);
 
+  _quadId   = gl4dgGenQuadf();
   _sphereId = gl4dgGenSpheref(7, 7);
-  _pId = gl4duCreateProgram("<vs>shaders/conv.vs", "<fs>shaders/conv.fs", NULL);
+  _pId      = gl4duCreateProgram("<vs>shaders/main.vs", "<fs>shaders/main.fs", NULL);
+  _pId_conv = gl4duCreateProgram("<vs>shaders/basic.vs", "<fs>shaders/blur.fs", NULL);
 
   /* Gestion de la texture pour le fbo */
 
@@ -72,17 +76,19 @@ void draw(void) {
   glUniform1f(glGetUniformLocation(_pId, "weight"), 1.1);
   gl4dgDraw(_sphereId);
   glUseProgram(0);
-
-  // debind fbo -> rebind l ecran en écriture pour indiquer que l'écran est la source
-  glBindFramebuffer(GL_DRAW_FRAMEBUFFER, 0);
-
-  glBlitFramebuffer(
-    0, 0, _wW - 1, _wH -1,
-    0, 0, _wW - 1, _wH -1,
-    GL_COLOR_BUFFER_BIT, GL_NEAREST
-  );
-
+  
+  // debind fbo, rebind main screen
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
+  
+  glUseProgram(_pId_conv);
+
+  /* Binder tex dans le tiroir à texture 0 et envoyer l'identifiant du tiroir de texture utilisé au shader */
+  glActiveTexture(GL_TEXTURE0);
+  glBindTexture(GL_TEXTURE_2D, _tex);
+  glUniform1i(glGetUniformLocation(_pId_conv, "tex"), 0);
+
+  gl4dgDraw(_quadId);
+  glUseProgram(0);
 }
 
 void sortie(void) {
