@@ -68,6 +68,8 @@ void init(void) {
 }
 
 void draw(void) {
+  GLfloat pas[] = { 1.0f / (_wW - 1.0f), 1.0f / (_wH - 1.0f) };
+
   // bind fbo
   glBindFramebuffer(GL_FRAMEBUFFER, _fbo);
 
@@ -86,6 +88,7 @@ void draw(void) {
   glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_2D, _tex);
   glUniform1i(glGetUniformLocation(_pId_conv, "tex"), 0);
+  glUniform2fv(glGetUniformLocation(_pId_conv, "pas"), 1, pas);
 
   gl4dgDraw(_quadId);
   glUseProgram(0);
