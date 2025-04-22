@@ -36,7 +36,7 @@ void init(void) {
   _quadId   = gl4dgGenQuadf();
   _sphereId = gl4dgGenSpheref(7, 7);
   _pId      = gl4duCreateProgram("<vs>shaders/main.vs", "<fs>shaders/main.fs", NULL);
-  _pId_conv = gl4duCreateProgram("<vs>shaders/basic.vs", "<fs>shaders/blur.fs", NULL);
+  _pId_conv = gl4duCreateProgram("<vs>shaders/basic.vs", "<fs>shaders/sobel.fs", NULL);
 
   /* Gestion de la texture pour le fbo */
 
@@ -76,6 +76,7 @@ void draw(void) {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glUseProgram(_pId);
   glUniform1f(glGetUniformLocation(_pId, "weight"), 1.1);
+  glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
   gl4dgDraw(_sphereId);
   glUseProgram(0);
   
@@ -90,6 +91,7 @@ void draw(void) {
   glUniform1i(glGetUniformLocation(_pId_conv, "tex"), 0);
   glUniform2fv(glGetUniformLocation(_pId_conv, "pas"), 1, pas);
 
+  glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
   gl4dgDraw(_quadId);
   glUseProgram(0);
 }
