@@ -1,6 +1,9 @@
 .vscode
 *.o
+
 modelisation
 rgb
 texte
+convolution
+
 notes.md
