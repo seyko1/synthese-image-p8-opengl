@@ -7,8 +7,7 @@ layout(location = 1) in vec3 normal;
 // Coordonnée 2D dans une texture
 layout(location = 2) in vec2 texCoord;
 
-uniform float weight;
- 
+
 void main() {
     gl_Position = vec4(pos, weight);
 }
