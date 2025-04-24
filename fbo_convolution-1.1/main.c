@@ -12,7 +12,6 @@ static void sortie(void);
 
 static GLuint _wW = 800, _wH = 600;
 static GLuint _quadId = 0;
-static GLuint _pId = 0;
 static GLuint _pId_conv = 0;
 static GLuint _fbo = 0;
 static GLuint _tex[2] = { 0, 0 };
@@ -36,8 +35,9 @@ void init(void) {
   glClearColor(0.5f, 0.0f, 0.0f, 1.0f);
 
   _quadId   = gl4dgGenQuadf();
-  _pId      = gl4duCreateProgram("<vs>shaders/basic.vs", "<fs>shaders/main.fs", NULL);
-  _pId_conv = gl4duCreateProgram("<vs>shaders/basic.vs", "<fs>shaders/sobel.fs", NULL);
+  _pId_conv = gl4duCreateProgram("<vs>shaders/basic.vs", "<fs>shaders/blur.fs", NULL);
+
+  glGenFramebuffers(1, &_fbo);
 
   /* Gestion de la texture pour le fbo */
 
@@ -70,51 +70,36 @@ void init(void) {
 
   // Debind texture
   glBindTexture(GL_TEXTURE_2D, 0);
-  
-  /* Gestion du FBO */
-  
-  glGenFramebuffers(1, &_fbo);
-
-  // Bind fbo
-  glBindFramebuffer(GL_FRAMEBUFFER, _fbo);
-  // Attacher la texture au fbo
-  glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, _tex[1], 0);
-  // Debind fbo
-  glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
 void draw(void) {
+  static int i = 0;
+
   GLfloat pas[] = { 1.0f / (_wW - 1.0f), 1.0f / (_wH - 1.0f) };
 
   // bind fbo
   glBindFramebuffer(GL_FRAMEBUFFER, _fbo);
+  // attacher la texture dans laquelle le fbo doit ecrire
+  glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, _tex[(i + 1) % 2], 0);
 
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  glUseProgram(_pId);
-
-  // lire depuis tex 0
-  glActiveTexture(GL_TEXTURE0);
-  glBindTexture(GL_TEXTURE_2D, _tex[0]);
-
-  glUniform1i(glGetUniformLocation(_pId_conv, "tex"), 0);
-
-  gl4dgDraw(_quadId);
-  glUseProgram(0);
-
-  // debind fbo, rebind main screen
-  glBindFramebuffer(GL_FRAMEBUFFER, 0);
   
   glUseProgram(_pId_conv);
 
   /* Binder tex dans le tiroir à texture 0 et envoyer l'identifiant du tiroir de texture utilisé au shader */
-  /* Faire le sobel dans tex 1 */
+  /* Faire le sobel dans la texture i % 2 */
   glActiveTexture(GL_TEXTURE0);
-  glBindTexture(GL_TEXTURE_2D, _tex[1]);
+  glBindTexture(GL_TEXTURE_2D, _tex[i % 2]);
   glUniform1i(glGetUniformLocation(_pId_conv, "tex"), 0);
   glUniform2fv(glGetUniformLocation(_pId_conv, "pas"), 1, pas);
 
   gl4dgDraw(_quadId);
   glUseProgram(0);
+
+  // Passer du FBO a l'écran
+  glBlitNamedFramebuffer(_pId_conv, 0, 0, 0, _wW - 1, _wH - 1, 0, 0, _wW - 1, _wH - 1, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+  ++i;
+  SDL_Delay(10);
 }
 
 void sortie(void) {
