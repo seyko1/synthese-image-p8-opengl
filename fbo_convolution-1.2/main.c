@@ -58,7 +58,7 @@ void init(void) {
   
   _gridId = gl4dgGenGrid2df(s->w, s->h);
 
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, s->w, s->h, 0, GL_RGB, GL_UNSIGNED_BYTE, s->pixels);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, s->w, s->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, s->pixels);
   SDL_FreeSurface(s);
 
   
@@ -78,7 +78,7 @@ void init(void) {
   gl4duGenMatrix(GL_FLOAT, "projection");
   gl4duBindMatrix("projection");
   gl4duLoadIdentityf();
-  gl4duFrustumf(-1.0f, 1.0f, (-1.0f * _wH) / _wW, (1.0f * _wH) / _wW, 1.0f, 1000.0f); 
+  gl4duFrustumf(-0.1f, 0.1f, (-0.1f * _wH) / _wW, (0.1f * _wH) / _wW, 0.1f, 1000.0f); 
 
 }
 
@@ -124,9 +124,9 @@ void draw(void) {
   glUniform2fv(glGetUniformLocation(_pId_hm, "pas"), 1, pas);
   gl4duBindMatrix("modelView");
   gl4duLoadIdentityf();
-  gl4duLookAtf(-1.5f, 1.0f, 1.5f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+  gl4duLookAtf(-1.0f, 0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
   gl4duSendMatrices();
-
+  
   gl4dgDraw(_gridId);
   glUseProgram(0);
 

@@ -6,9 +6,15 @@ layout(location = 2) in vec2 texCoord;
 
 uniform mat4 projection, modelView;
 
+uniform sampler2D tex;
+
 out vec2 tCoord;
 
 void main() {
-    gl_Position = projection * modelView * vec4(pos, 1.0);
+    /* On fait en sorte de changer la position du vertex en y
+     * selon le texel correspondant.
+     */
+    vec3 p = pos + vec3(0.0, texture(tex, texCoord).r / 4.0, 0.0);
+    gl_Position = projection * modelView * vec4(p, 1.0);
     tCoord = texCoord;
 }
