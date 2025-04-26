@@ -1,4 +1,5 @@
 #include <GL4D/gl4duw_SDL2.h>
+#include <GL4D/gl4df.h>
 #include <SDL_image.h>
 #include <GL4D/gl4dg.h>
 #include <stdio.h>
@@ -10,7 +11,7 @@ static void init(void);
 static void draw(void);
 static void sortie(void);
 
-static GLuint _wW = 1024, _wH = 768;
+static GLuint _wW = 1280, _wH = 1024;
 static GLuint _imageW = 100, _imageH = 75;
 static GLuint _quadId = 0;
 static GLuint _gridId = 0;
@@ -87,38 +88,15 @@ void draw(void) {
 
   GLfloat pas[] = { 1.0f / (_imageW - 1.0f), 1.0f / (_imageH - 1.0f) };
 
-  glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-  glViewport(0, 0, _imageW, _imageH);
+  gl4dfBlur(_tex[0], _tex[1], 3, i, 0, GL_FALSE);
 
-  // bind fbo
-  glBindFramebuffer(GL_FRAMEBUFFER, _fbo);
-  // attacher la texture dans laquelle le fbo doit ecrire
-  glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, _tex[(i + 1) % 2], 0);
-
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  
-  glUseProgram(_pId_conv);
-
-  /* Binder tex dans le tiroir à texture 0 et envoyer l'identifiant du tiroir de texture utilisé au shader */
-  /* Faire le sobel dans la texture i % 2 */
-  glActiveTexture(GL_TEXTURE0);
-  glBindTexture(GL_TEXTURE_2D, _tex[i % 2]);
-  glUniform1i(glGetUniformLocation(_pId_conv, "tex"), 0);
-  glUniform2fv(glGetUniformLocation(_pId_conv, "pas"), 1, pas);
-
-  gl4dgDraw(_quadId);
-
-  /* debind buffer & rebind main screen & reset viewPort size
-   * & set line polygon mode & clear buffers 
-   */
-  glViewport(0, 0, _wW, _wH);
   glBindFramebuffer(GL_FRAMEBUFFER, 0);
   glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   glUseProgram(_pId_hm);
   glActiveTexture(GL_TEXTURE0);
-  glBindTexture(GL_TEXTURE_2D, _tex[i % 2]);
+  glBindTexture(GL_TEXTURE_2D, _tex[1]);
   glUniform1i(glGetUniformLocation(_pId_hm, "tex"), 0);
   glUniform2fv(glGetUniformLocation(_pId_hm, "pas"), 1, pas);
   
