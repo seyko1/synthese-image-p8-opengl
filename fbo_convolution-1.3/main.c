@@ -84,7 +84,7 @@ void init(void) {
 }
 
 void draw(void) {
-  static int i = 0;
+  static int i = 0, inc = 1;
 
   GLfloat pas[] = { 1.0f / (_imageW - 1.0f), 1.0f / (_imageH - 1.0f) };
 
@@ -107,7 +107,11 @@ void draw(void) {
   
   gl4dgDraw(_gridId);
 
-  ++i;
+  if ((inc > 0 && i > 32) || (inc < 0 && i < 0)) {
+    inc = -inc;
+  }
+  i += inc;
+
   SDL_Delay(100);
 }
 
