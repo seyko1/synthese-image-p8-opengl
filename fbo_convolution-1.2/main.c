@@ -11,6 +11,7 @@ static void draw(void);
 static void sortie(void);
 
 static GLuint _wW = 1024, _wH = 768;
+static GLuint _imageW = 100, _imageH = 75;
 static GLuint _quadId = 0;
 static GLuint _gridId = 0;
 static GLuint _pId_conv = 0, _pId_hm = 0;
@@ -59,17 +60,17 @@ void init(void) {
   _gridId = gl4dgGenGrid2df(s->w, s->h);
 
   glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, s->w, s->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, s->pixels);
-  SDL_FreeSurface(s);
-
   
-  // Bind texture 1 avec rien, juste une config similaire
+  // Bind texture 1 avec les mêmes paramètres
   glBindTexture(GL_TEXTURE_2D, _tex[1]);
-
+  
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
   glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, _wW, _wH, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, s->w, s->h, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
+  
+  SDL_FreeSurface(s);
 
   // Debind texture
   glBindTexture(GL_TEXTURE_2D, 0);
@@ -79,57 +80,57 @@ void init(void) {
   gl4duBindMatrix("projection");
   gl4duLoadIdentityf();
   gl4duFrustumf(-0.1f, 0.1f, (-0.1f * _wH) / _wW, (0.1f * _wH) / _wW, 0.1f, 1000.0f); 
-
 }
 
 void draw(void) {
-  // static int i = 0;
+  static int i = 0;
 
-  GLfloat pas[] = { 1.0f / (_wW - 1.0f), 1.0f / (_wH - 1.0f) };
+  GLfloat pas[] = { 1.0f / (_imageW - 1.0f), 1.0f / (_imageH - 1.0f) };
 
-  // // bind fbo
-  // glBindFramebuffer(GL_FRAMEBUFFER, _fbo);
-  // // attacher la texture dans laquelle le fbo doit ecrire
-  // glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, _tex[(i + 1) % 2], 0);
+  glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+  glViewport(0, 0, _imageW, _imageH);
 
-  // glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-  
-  // glUseProgram(_pId_conv);
-
-  // /* Binder tex dans le tiroir à texture 0 et envoyer l'identifiant du tiroir de texture utilisé au shader */
-  // /* Faire le sobel dans la texture i % 2 */
-  // glActiveTexture(GL_TEXTURE0);
-  // glBindTexture(GL_TEXTURE_2D, _tex[i % 2]);
-  // glUniform1i(glGetUniformLocation(_pId_conv, "tex"), 0);
-  // glUniform2fv(glGetUniformLocation(_pId_conv, "pas"), 1, pas);
-
-  // gl4dgDraw(_quadId);
-  // glUseProgram(0);
-
-  // // Passer du FBO a l'écran
-  // glBlitNamedFramebuffer(_pId_conv, 0, 0, 0, _wW - 1, _wH - 1, 0, 0, _wW - 1, _wH - 1, GL_COLOR_BUFFER_BIT, GL_NEAREST);
-  // ++i;
-  // SDL_Delay(10);
-
-  glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+  // bind fbo
+  glBindFramebuffer(GL_FRAMEBUFFER, _fbo);
+  // attacher la texture dans laquelle le fbo doit ecrire
+  glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, _tex[(i + 1) % 2], 0);
 
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   
-  glUseProgram(_pId_hm);
+  glUseProgram(_pId_conv);
 
-
+  /* Binder tex dans le tiroir à texture 0 et envoyer l'identifiant du tiroir de texture utilisé au shader */
+  /* Faire le sobel dans la texture i % 2 */
   glActiveTexture(GL_TEXTURE0);
-  glBindTexture(GL_TEXTURE_2D, _tex[0]);
+  glBindTexture(GL_TEXTURE_2D, _tex[i % 2]);
+  glUniform1i(glGetUniformLocation(_pId_conv, "tex"), 0);
+  glUniform2fv(glGetUniformLocation(_pId_conv, "pas"), 1, pas);
+
+  gl4dgDraw(_quadId);
+
+  /* debind buffer & rebind main screen & reset viewPort size
+   * & set line polygon mode & clear buffers 
+   */
+  glViewport(0, 0, _wW, _wH);
+  glBindFramebuffer(GL_FRAMEBUFFER, 0);
+  glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+  glUseProgram(_pId_hm);
+  glActiveTexture(GL_TEXTURE0);
+  glBindTexture(GL_TEXTURE_2D, _tex[i % 2]);
   glUniform1i(glGetUniformLocation(_pId_hm, "tex"), 0);
   glUniform2fv(glGetUniformLocation(_pId_hm, "pas"), 1, pas);
+  
   gl4duBindMatrix("modelView");
   gl4duLoadIdentityf();
   gl4duLookAtf(-1.0f, 0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
   gl4duSendMatrices();
   
   gl4dgDraw(_gridId);
-  glUseProgram(0);
 
+  ++i;
+  SDL_Delay(100);
 }
 
 void sortie(void) {
