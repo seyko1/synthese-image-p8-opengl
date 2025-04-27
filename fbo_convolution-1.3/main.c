@@ -38,7 +38,6 @@ void init(void) {
   glClearColor(0.5f, 0.0f, 0.0f, 1.0f);
 
   _quadId   = gl4dgGenQuadf();
-  _pId_conv = gl4duCreateProgram("<vs>shaders/basic.vs", "<fs>shaders/blur.fs", NULL);
   _pId_hm   = gl4duCreateProgram("<vs>shaders/hm.vs", "<fs>shaders/hm.fs", NULL);
 
   glGenFramebuffers(1, &_fbo);
@@ -105,6 +104,8 @@ void draw(void) {
   gl4duLookAtf(-1.0f, 0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
   gl4duSendMatrices();
   
+  glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
   gl4dgDraw(_gridId);
 
   if ((inc > 0 && i > 32) || (inc < 0 && i < 0)) {
@@ -112,7 +113,7 @@ void draw(void) {
   }
   i += inc;
 
-  SDL_Delay(100);
+  SDL_Delay(10);
 }
 
 void sortie(void) {
