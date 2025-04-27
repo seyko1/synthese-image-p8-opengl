@@ -18,9 +18,18 @@ static GLuint _gridId = 0;
 static GLuint _pId = 0;
 static GLuint _tex = 0;
 
-static GLint _hauteurs[NBE] = { 0 };
+static GLshort _hauteurs[NBE] = { 0 };
 static GLbyte _gridW = 32, _gridH = 32;
 
+void shift(short v) {
+  for (int i = NBE - 1; i > 0; i--) {
+    _hauteurs[i] = _hauteurs[i - 1];
+  }
+
+  _hauteurs[0] = v;
+}
+
+static short moyenne = 0;
 void grid(int state) {
   switch(state) {
     case GL4DH_INIT:
@@ -32,12 +41,19 @@ void grid(int state) {
     case GL4DH_UPDATE_WITH_AUDIO:
       int length = ahGetAudioStreamLength();
       short * stream = (short*) ahGetAudioStream();
-      
+      int value = 0;
       /* Avancer de 2 pour ne prendre qu'une des 2 valeurs du stéréo */
       for (int i = 0; i < length / 4; ++i) {
-        // 1024 valeurs d'oreille gauche
-        _hauteurs[i] = stream[2 * i];
+        // somme par lots de 32 valeurs d'oreille gauche
+        if (i > 0 && (i % 32) == 0) {
+          moyenne = value / 32;
+          shift(moyenne);
+          value = 0;
+        }
+        value += fabs(stream[2 * i]);
       }
+      moyenne = value / 32;
+      shift(moyenne);
       return;
     default:
       draw();
@@ -74,12 +90,12 @@ void draw(void) {
   glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_2D, _tex);
   // Appliquer les valeurs de pixels à la texture
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_R16, _gridW, _gridH, 0, GL_RED, GL_UNSIGNED_SHORT, _hauteurs);
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_R16, _gridW, _gridH, 0, GL_RED, GL_SHORT, _hauteurs);
   glUniform1i(glGetUniformLocation(_pId, "tex"), 0);
   
   gl4duBindMatrix("modelView");
   gl4duLoadIdentityf();
-  gl4duLookAtf(-1.0f, 0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+  gl4duLookAtf(-1.0f, 0.5f, 1.5f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
   glTranslatef(0.0, 0.0, -1.0f);
   gl4duSendMatrices();
   

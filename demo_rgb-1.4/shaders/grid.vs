@@ -8,6 +8,6 @@ uniform mat4 projection, modelView;
 uniform sampler2D tex;
 
 void main() {
-    vec3 p = pos + vec3(0.0, texture(tex, texCoord).r / 4.0 , 0.0);
+    vec3 p = pos + vec3(0.0, texture(tex, texCoord).r / 2.0, 0.0);
     gl_Position = projection * modelView * vec4(p, 1.0);
 }
