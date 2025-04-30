@@ -7,7 +7,7 @@
 #include <math.h>
 #include "audioHelper.h"
 
-#define NBE 32
+#define HEIGHTS_SIZE 16
 
 static void init(void);
 static void draw(void);
@@ -18,12 +18,12 @@ static GLuint _gridId = 0;
 static GLuint _pId = 0;
 static GLuint _tex = 0;
 
-static GLuint _hauteurs[NBE] = { 0 };
+static GLuint _hauteurs[HEIGHTS_SIZE] = { 0 };
 static GLbyte _gridW = 64, _gridH = 64;
 
 /* Remplace le 1er élément du tableau et décale les autres */
 void shift(short v) {
-  for (int i = NBE - 1; i > 0; i--) {
+  for (int i = HEIGHTS_SIZE - 1; i > 0; i--) {
     _hauteurs[i] = _hauteurs[i - 1];
   }
 
@@ -49,6 +49,7 @@ void grid(int state) {
         value += fabs(stream[2 * i]);
       }
       moyenne = value / (length / 4);
+      SDL_Delay(60);
       shift(moyenne);
       return;
     default:
@@ -76,18 +77,19 @@ void init(void) {
 }
 
 void draw(void) {
-  glClearColor(0.5f, 0.0f, 0.0f, 1.0f);
+  GLfloat pas[] = { 1.0f / (_gridW - 1.0f), 1.0f / (_gridH - 1.0f) };
+
+  glClearColor(0.0f, 0.7f, 0.7f, 1.0f);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-  glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-  
   glUseProgram(_pId);
   
   glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_2D, _tex);
-  // Envoyer les hauteurs dans une texture de dimension 1 * NBE
-  glTexImage2D(GL_TEXTURE_2D, 0, GL_R16, 1, NBE, 0, GL_RED, GL_SHORT, _hauteurs);
+  // Envoyer les hauteurs dans une texture de dimension 1 * HEIGHTS_SIZE
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_R16, 1, HEIGHTS_SIZE, 0, GL_RED, GL_SHORT, _hauteurs);
   glUniform1i(glGetUniformLocation(_pId, "tex"), 0);
+  glUniform2fv(glGetUniformLocation(_pId, "pas"), 1, pas);
   
   gl4duBindMatrix("modelView");
   gl4duLoadIdentityf();
@@ -97,7 +99,6 @@ void draw(void) {
   gl4dgDraw(_gridId);
   
   glBindTexture(GL_TEXTURE_2D, 0);
-  glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
   glUseProgram(0);
 }
 
