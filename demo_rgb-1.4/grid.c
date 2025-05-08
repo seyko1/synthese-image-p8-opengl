@@ -49,7 +49,6 @@ void grid(int state) {
         value += fabs(stream[2 * i]);
       }
       moyenne = value / (length / 4);
-      SDL_Delay(60);
       shift(moyenne);
       return;
     default:
