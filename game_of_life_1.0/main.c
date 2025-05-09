@@ -11,7 +11,7 @@ static void init(void);
 static void draw(void);
 static void sortie(void);
 
-static GLuint _wW = 640, _wH = 480;
+static GLuint _wW = 1024, _wH = 768;
 static GLuint _cubeId = 0;
 static GLuint _pId = 0;
 
@@ -30,10 +30,13 @@ int main(int argc, char ** argv) {
 
 void init(void) {
   glClearColor(0.7f, 0.7f, 0.7f, 1.0f);
+  glEnable(GL_DEPTH_TEST);
+
   _cubeId = gl4dgGenCubef();
   // Créer un programme shader à partir de hello.vs et hello.fs, qui pourra s'occuper du rendu.
   _pId = gl4duCreateProgram("<vs>shaders/hello.vs", "<fs>shaders/hello.fs", NULL);
-  gl4duGenMatrix(GL_FLOAT, "modelView");
+  gl4duGenMatrix(GL_FLOAT, "view");
+  gl4duGenMatrix(GL_FLOAT, "model");
 
   // Appliquer une matrice de projection, elle sera envoyé lors de l'appel à sendMatrices()
   gl4duGenMatrix(GL_FLOAT, "projection");
@@ -45,19 +48,35 @@ void init(void) {
   gl4duFrustumf(-1.0f, 1.0f, bottom, top, 1.0f, 100.0f);
 
   // Afficher le cube en file de fer
-  glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+  //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+}
+
+static double get_dt(void) {
+  static double t0 = 0.0f;
+  // Récupérer le temps écoulé en ms entre le démarrage du programme et la frame en cours
+  double t = gl4dGetElapsedTime();
+  // Calculer le temps écoulé depuis la frame précédente en seconde
+  double dt = (t - t0) / 1000.0f;
+  t0 = t;
+  return dt;
 }
 
 void draw(void) {
+  static GLfloat rot = 0.0f;
+
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glUseProgram(_pId);
 
-  gl4duBindMatrix("modelView");
+  gl4duBindMatrix("view");
   gl4duLoadIdentityf();
-  
-  // -2 sur les z car notre frustum a un near à 1 donc on commence à voir non plus à 0 mais -1 (éloignement)
-  // on éloigne à -3 quand on passe à un cube car il a une profondeur (+1 en avant -1 en arrière)
-  gl4duTranslatef(0.0f, 0.0f, -3.0f);
+  gl4duLookAtf(0.0f, 2.5f, -7.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+
+  gl4duBindMatrix("model");
+  gl4duLoadIdentityf();
+
+  gl4duTranslatef(0.0f, 1.0f, -3.0f);
+  gl4duRotatef(rot, 0.0f, 1.0f, 0.0f);
+  GLfloat angle = 180.0f * rot / M_PI;
   
   for (int i = 0; i < NB_CUBES; ++i) {
     // Ramener i dans la plage [-1, 1] 
@@ -75,7 +94,7 @@ void draw(void) {
         gl4duPushMatrix();
         gl4duTranslatef(0.0f, 0.0f, z);
         // placer le scale en bout de chaine pour éviter qu'il n'agissse sur les translations précédentes
-        gl4duScalef(0.02f, 0.02f, 0.02f);
+        gl4duScalef(0.08f, 0.08f, 0.08f);
         gl4duSendMatrices();
         gl4duPopMatrix();
         gl4dgDraw(_cubeId);
@@ -89,6 +108,7 @@ void draw(void) {
   gl4duSendMatrices();
 
   glUseProgram(0);
+  rot += 3.0f * M_PI * get_dt();
 }
 
 void sortie(void) {
