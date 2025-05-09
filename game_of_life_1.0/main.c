@@ -24,8 +24,11 @@ static GLuint _cubeId = 0;
 static GLuint _pId = 0;
 
 static GLboolean grid[NB_CUBES][NB_CUBES][NB_CUBES];
+static GLfloat colorAlive[] = { 0.6f, 1.0f, 0.5f, 1.0f };
+static const GLfloat colorDead[]  = { 1.0f, 1.0f, 1.0f, 0.5f };
 
 static GLint colorUniformLocation;
+static GLint isAliveUniformLocation;
 
 int main(int argc, char ** argv) {
   if(!gl4duwCreateWindow(argc, argv, "Ateliers API8 - modélisation", GL4DW_POS_CENTERED, GL4DW_POS_CENTERED,
@@ -84,7 +87,8 @@ void init(void) {
   GLfloat top    = (1.0f * _wH) / _wW;
   gl4duFrustumf(-1.0f, 1.0f, bottom, top, 1.0f, 100.0f);
 
-  colorUniformLocation = glGetUniformLocation(_pId, "couleur");
+  colorUniformLocation = glGetUniformLocation(_pId, "color");
+  isAliveUniformLocation = glGetUniformLocation(_pId, "isAlive");
 }
 
 static double get_dt(void) {
@@ -98,8 +102,6 @@ static double get_dt(void) {
 }
 
 void drawCube(int i, int j, int k) {
-  static const GLfloat colorAlive[] = { 0.6f, 0.0f, 0.0f, 1.0f };
-  static const GLfloat colorDead[]  = { 1.0f, 1.0f, 1.0f, 0.5f };
   static const float scale = 0.08f;
 
   // Ramener à l'échelle [-1;1]
@@ -107,14 +109,16 @@ void drawCube(int i, int j, int k) {
   float y  = 2.0f * (j / (NB_CUBES - 1.0f)) - 1.0f;
   float z  = 2.0f * (k / (NB_CUBES - 1.0f)) - 1.0f;
 
-  const GLfloat * color = grid[i][j][k] == GL_TRUE ? colorAlive : colorDead;
-  GLenum mode = grid[i][j][k] ? GL_FILL : GL_LINE;
+  GLboolean isAlive = grid[i][j][k] == GL_TRUE;
+  const GLfloat * color = isAlive ? colorAlive : colorDead;
+  GLenum mode = isAlive ? GL_FILL : GL_LINE;
 
   gl4duPushMatrix();
   gl4duTranslatef(x, y, z);
   gl4duScalef(scale, scale, scale);
   gl4duSendMatrices();
   glPolygonMode(GL_FRONT_AND_BACK, mode);
+  glUniform1i(isAliveUniformLocation, isAlive);
   glUniform4fv(colorUniformLocation, 1, color);
   gl4dgDraw(_cubeId);
   gl4duPopMatrix();
@@ -122,6 +126,10 @@ void drawCube(int i, int j, int k) {
 
 void draw(void) {
   static GLfloat rot = 0.0f;
+  
+  // Modifier la hue value
+  colorAlive[0] += get_dt() * 0.5f;
+  if (colorAlive[0] > 1.0f) colorAlive[0] -= 1.0f;
 
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glUseProgram(_pId);
