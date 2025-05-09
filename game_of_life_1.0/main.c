@@ -63,6 +63,7 @@ static double get_dt(void) {
 
 void draw(void) {
   static GLfloat rot = 0.0f;
+  static const GLfloat rouge[] = { 0.6f, 0.0f, 0.0f , 1.0f }, blanc[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glUseProgram(_pId);
@@ -97,6 +98,8 @@ void draw(void) {
         gl4duScalef(0.08f, 0.08f, 0.08f);
         gl4duSendMatrices();
         gl4duPopMatrix();
+        GLfloat * couleur = (i + j + k) % 2 ? rouge : blanc;
+        glUniform4fv(glGetUniformLocation(_pId, "couleur"), 1, couleur);
         gl4dgDraw(_cubeId);
       }
       gl4duPopMatrix();
