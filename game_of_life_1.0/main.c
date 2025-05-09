@@ -39,7 +39,6 @@ int main(int argc, char ** argv) {
   init();
   atexit(sortie);
   gl4duwDisplayFunc(draw);
-  gl4duwKeyDownFunc(updateGrid);
   gl4duwMainLoop();
   return 0;
 }
@@ -125,10 +124,12 @@ void drawCube(int i, int j, int k) {
 }
 
 void draw(void) {
+  float dt = get_dt();
   static GLfloat rot = 0.0f;
-  
+  static float nextGenTimer = 0.0f;
+
   // Modifier la hue value
-  colorAlive[0] += get_dt() * 0.5f;
+  colorAlive[0] += dt * 0.5f;
   if (colorAlive[0] > 1.0f) colorAlive[0] -= 1.0f;
 
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -149,6 +150,13 @@ void draw(void) {
        drawCube(i, j, k);
 
   glUseProgram(0);
+
+  nextGenTimer += dt;
+  if (nextGenTimer >= 0.05f) {
+    updateGrid();
+    nextGenTimer = 0.0f;
+  }
+
   rot += 2.0f * M_PI * get_dt();
 }
 
