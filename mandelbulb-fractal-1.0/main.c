@@ -28,9 +28,7 @@ typedef struct {
 static MandelPosition points[MAX_POINTS];
 static int point_count = 0;
 
-static float maxZ = 0.0f;
-static float cameraSpeed = 100.0f;
-static float zTranslation = -500.0f;
+static float zTranslation = -300.0f;
 
 int main(int argc, char ** argv) {
   if(!gl4duwCreateWindow(argc, argv, "Fractal Mandelbulb", GL4DW_POS_CENTERED, GL4DW_POS_CENTERED,
@@ -48,7 +46,7 @@ int main(int argc, char ** argv) {
 void init(void) {
   glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-   SDL_Window *win = SDL_GL_GetCurrentWindow();
+  SDL_Window *win = SDL_GL_GetCurrentWindow();
   if (win) {
     SDL_GL_SwapWindow(win);
   }
@@ -84,7 +82,7 @@ void init(void) {
 static double get_dt(void) {
   static double t0 = 0.0f;
   double t = gl4dGetElapsedTime();
-  double dt = (t - t0) / 1000.0f;
+  double dt = (t - t0) / 100.0f;
   t0 = t;
   return dt;
 }
@@ -94,13 +92,8 @@ void draw(void) {
   glUseProgram(_pId);
   
   double dt = get_dt();
-  zTranslation += cameraSpeed * dt;
-  printf("zTranslation %f\n", zTranslation);
-  
-  if (zTranslation > maxZ) {
-    zTranslation = -maxZ * 3;
-  }
-  
+  zTranslation += dt;
+
   gl4duBindMatrix("modelView");
   gl4duLoadIdentityf();
   gl4duTranslatef(0.0f, 0.0f, zTranslation);
@@ -171,9 +164,6 @@ void initPoints() {
                 z * 100,
                 lastIteration 
               };
-              if (z * 100 > maxZ) {
-                maxZ = z * 100;
-              }
             }
             break;
           }
