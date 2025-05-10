@@ -3,9 +3,10 @@
 #include <stdio.h>
 #include <math.h>
 
-#define DIM 128
-#define MAX_ITER 20
+#define DIM 160
+#define MAX_ITER 10
 #define N 8
+#define POINTS_OFFSET 100
 #define MAX_POINTS (DIM * DIM * DIM)
 
 static void init(void);
@@ -93,6 +94,7 @@ static double get_dt(void) {
 void draw(void) {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glUseProgram(_pId);
+  glEnable(GL_DEPTH_TEST);
   
   double dt = get_dt();
   zTranslation += dt;
@@ -167,9 +169,9 @@ void initPoints() {
               edge = 1;
               int depth = map(lastIteration, 0, MAX_ITER, 0, 255);
               points[point_count++] = (MandelPosition) {
-                x * 100,
-                y * 100,
-                z * 100,
+                x * POINTS_OFFSET,
+                y * POINTS_OFFSET,
+                z * POINTS_OFFSET,
                 depth 
               };
             }
