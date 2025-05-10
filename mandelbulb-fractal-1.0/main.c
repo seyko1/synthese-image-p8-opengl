@@ -28,7 +28,9 @@ typedef struct {
 static MandelPosition points[MAX_POINTS];
 static int point_count = 0;
 
-static float cameraZ = -170.0f;
+static float maxZ = 0.0f;
+static float cameraSpeed = 100.0f;
+static float zTranslation = -500.0f;
 
 int main(int argc, char ** argv) {
   if(!gl4duwCreateWindow(argc, argv, "Fractal Mandelbulb", GL4DW_POS_CENTERED, GL4DW_POS_CENTERED,
@@ -39,13 +41,17 @@ int main(int argc, char ** argv) {
   init();
   atexit(sortie);
   gl4duwDisplayFunc(draw);
-  gl4duwKeyDownFunc(keyboard);
   gl4duwMainLoop();
   return 0;
 }
 
 void init(void) {
   glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+   SDL_Window *win = SDL_GL_GetCurrentWindow();
+  if (win) {
+    SDL_GL_SwapWindow(win);
+  }
   
   _pId = gl4duCreateProgram("<vs>shaders/hello.vs", "<fs>shaders/hello.fs", NULL);
   gl4duGenMatrix(GL_FLOAT, "modelView");
@@ -75,17 +81,33 @@ void init(void) {
   glBindVertexArray(0);
 }
 
+static double get_dt(void) {
+  static double t0 = 0.0f;
+  double t = gl4dGetElapsedTime();
+  double dt = (t - t0) / 1000.0f;
+  t0 = t;
+  return dt;
+}
+
 void draw(void) {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glUseProgram(_pId);
   
+  double dt = get_dt();
+  zTranslation += cameraSpeed * dt;
+  printf("zTranslation %f\n", zTranslation);
+  
+  if (zTranslation > maxZ) {
+    zTranslation = -maxZ * 3;
+  }
+  
   gl4duBindMatrix("modelView");
   gl4duLoadIdentityf();
-  gl4duTranslatef(0.0f, 0.0f, cameraZ);
+  gl4duTranslatef(0.0f, 0.0f, zTranslation);
   gl4duSendMatrices();
   
   glBindVertexArray(_vao);
-  glPointSize(2.0f); // pour que les points soient visibles
+  glPointSize(3.0f);
   glDrawArrays(GL_POINTS, 0, point_count);
   glBindVertexArray(0);
 
@@ -149,24 +171,14 @@ void initPoints() {
                 z * 100,
                 lastIteration 
               };
+              if (z * 100 > maxZ) {
+                maxZ = z * 100;
+              }
             }
             break;
           }
         }
       }
     }
-  }
-}
-
-void keyboard(int key) {
-  switch (key) {
-    case SDLK_UP:
-    case SDLK_w:
-      cameraZ += 5.0f; // se rapproche
-      break;
-    case SDLK_DOWN:
-    case SDLK_s:
-      cameraZ -= 5.0f; // s’éloigne
-      break;
   }
 }
