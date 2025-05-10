@@ -15,20 +15,20 @@ static void sortie(void);
 void initPoints();
 void keyboard(int key);
 
-static GLuint _wW = 1080, _wH = 720;
+static GLuint _wW = 1920, _wH = 1080;
 static GLuint _pId = 0;
 static GLuint _vao = 0;
 static GLuint _vbo = 0;
 
 typedef struct {
   float x, y, z;
-  int iteration;
+  int depth;
 } MandelPosition;
 
 static MandelPosition points[MAX_POINTS];
 static int point_count = 0;
 
-static float zTranslation = -300.0f;
+static float zTranslation = -400.0f;
 
 int main(int argc, char ** argv) {
   if(!gl4duwCreateWindow(argc, argv, "Fractal Mandelbulb", GL4DW_POS_CENTERED, GL4DW_POS_CENTERED,
@@ -76,13 +76,16 @@ void init(void) {
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(MandelPosition), (const void*)0);
   glEnableVertexAttribArray(0);
 
+  glVertexAttribPointer(1, 1, GL_INT, GL_FALSE, sizeof(MandelPosition), (const void*)(3 * sizeof(int)));
+  glEnableVertexAttribArray(1);
+
   glBindVertexArray(0);
 }
 
 static double get_dt(void) {
   static double t0 = 0.0f;
   double t = gl4dGetElapsedTime();
-  double dt = (t - t0) / 100.0f;
+  double dt = (t - t0) / 60.0f;
   t0 = t;
   return dt;
 }
@@ -115,6 +118,10 @@ void sortie(void) {
     glDeleteBuffers(1, &_vbo);
   }
   gl4duClean(GL4DU_ALL);
+}
+
+int map(int x, int in_min, int in_max, int out_min, int out_max) {
+  return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
 
 void initPoints() {
@@ -155,14 +162,15 @@ void initPoints() {
             break;
           }
 
-          if (iteration > MAX_ITER) {
+          if (iteration == MAX_ITER) {
             if (edge == 0 && point_count < MAX_POINTS) {
               edge = 1;
+              int depth = map(lastIteration, 0, MAX_ITER, 0, 255);
               points[point_count++] = (MandelPosition) {
                 x * 100,
                 y * 100,
                 z * 100,
-                lastIteration 
+                depth 
               };
             }
             break;

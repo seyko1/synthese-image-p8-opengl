@@ -1,6 +1,17 @@
 #version 330
 out vec4 fragColor;
 
+in float vDepth;
+
+vec3 hsb2rgb(in vec3 c) {
+    vec3 rgb = clamp(abs(mod(c.x * 6.0 + vec3(0.0, 4.0, 2.0), 6.0) - 3.0) - 1.0, 0.0, 1.0);
+
+    return c.z + c.y * (rgb-0.5) * (1.0 - abs(2.0 * c.z - 1.0));
+}
+
 void main() {
-     fragColor = vec4(1.0, 1.0, 1.0, 1.0);
+    float brightness = vDepth / 255;
+    vec3 hsb = vec3(1.0, 1.0, brightness); 
+
+    fragColor = vec4(hsb2rgb(hsb), 1.0);
 }
