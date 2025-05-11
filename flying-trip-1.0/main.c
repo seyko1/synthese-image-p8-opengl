@@ -4,17 +4,20 @@
 #include <math.h>
 
 static void init(void);
-/* TODO : gérer le retaillage de la fenêtre */
-/* static void resize(int width, int height); */
 static void draw(void);
 static void sortie(void);
 
-static GLuint _wW = 640, _wH = 480;
-static GLuint _cubeId = 0;
+extern void initNoiseTextures(void);
+extern void useNoiseTextures(GLuint pid, int shift);
+extern void unuseNoiseTextures(int shift);
+extern void freeNoiseTextures(void);
+
+static GLuint _wW = 1920, _wH = 1080;
+static GLuint _gridId = 0;
 static GLuint _pId = 0;
 
 int main(int argc, char ** argv) {
-  if(!gl4duwCreateWindow(argc, argv, "Ateliers API8 - modélisation", GL4DW_POS_CENTERED, GL4DW_POS_CENTERED,
+  if(!gl4duwCreateWindow(argc, argv, "Flying Trip", GL4DW_POS_CENTERED, GL4DW_POS_CENTERED,
 			 _wW, _wH, GL4DW_OPENGL | GL4DW_RESIZABLE | GL4DW_SHOWN)) {
     fprintf(stderr, "Erreur lors de la création de la fenêtre\n");
     return 1;
@@ -27,8 +30,9 @@ int main(int argc, char ** argv) {
 }
 
 void init(void) {
-  glClearColor(0.5f, 0.0f, 0.0f, 1.0f);
-  _cubeId = gl4dgGenCubef();
+  initNoiseTextures();
+  glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+  _gridId = gl4dgGenGrid2df(_wW / 5, _wH / 5);
   // Créer un programme shader à partir de hello.vs et hello.fs, qui pourra s'occuper du rendu.
   _pId = gl4duCreateProgram("<vs>shaders/hello.vs", "<fs>shaders/hello.fs", NULL);
   gl4duGenMatrix(GL_FLOAT, "modelView");
@@ -40,48 +44,34 @@ void init(void) {
   
   GLfloat bottom = (-1.0f * _wH) / _wW;
   GLfloat top    = (1.0f * _wH) / _wW;
-  gl4duFrustumf(-1.0f, 1.0f, bottom, top, 1.0f, 100.0f);
+  gl4duFrustumf(-1.0f * 0.1f, 1.0f * 0.1f, bottom * 0.1f, top * 0.1f, 0.1f, 100.0f);
 
   // Afficher le cube en file de fer
-  glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-}
-
-// Renvoyer le delta temps écoulé entre deux appels
-static double get_dt(void) {
-  static double t0 = 0.0f;
-  // Récupérer le temps écoulé en ms entre le démarrage du programme et la frame en cours
-  double t = gl4dGetElapsedTime();
-  // Calculer le temps écoulé depuis la frame précédente en seconde
-  double dt = (t - t0) / 1000.0f;
-  t0 = t;
-  return dt;
+  // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 }
 
 void draw(void) {
-  static GLfloat rot = 0.0f;
+  float time = gl4dGetElapsedTime() / 1000.0f;
+  // printf("elapsed %f\n", time);
+  
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glUseProgram(_pId);
+  glUniform1f(glGetUniformLocation(_pId, "time"), time);
 
   gl4duBindMatrix("modelView");
-  gl4duLoadIdentityf(); // matrice neutre utilisée pour l'initialisation 
-  
-  // -2 sur les z car notre frustum a un near à 1 donc on commence à voir non plus à 0 mais -1 (éloignement)
-  // on éloigne à -3 quand on passe à un cube car il a une profondeur (+1 en avant -1 en arrière)
-  gl4duTranslatef(sin(rot), 0.0f, -3.0f);
-  // Convertir rot de radian à degré
-  GLfloat angle = 180.0f * rot / M_PI;
-  // Rotation autour de l'axe des y 
-  gl4duRotatef(angle, 0.0f, 1.0f, 0.0f); 
-  
-  // Les modifications de matrices doivent être envoyées au GPU avant de dessinner
+  gl4duLoadIdentityf();
+  gl4duLookAtf(0.0f, 1.0f, 1.0f, 0.0f, 0.7f, 0.0f, 0.0f, 1.0f, 0.0f);
+  gl4duScalef(7.0f, 1.0f, 6.0f);
   gl4duSendMatrices();
-
-  gl4dgDraw(_cubeId);
+  
+  useNoiseTextures(_pId, 0);
+  gl4dgDraw(_gridId);
+  unuseNoiseTextures(0);
+  
   glUseProgram(0);
-
-  rot += 2.0f * M_PI * get_dt();
 }
 
 void sortie(void) {
+  freeNoiseTextures();
   gl4duClean(GL4DU_ALL);
 }

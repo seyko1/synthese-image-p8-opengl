@@ -21,7 +21,7 @@ PROGNAME = flying
 VERSION = 1.0
 distdir = $(PACKNAME)_$(PROGNAME)-$(VERSION)
 HEADERS = 
-SOURCES = main.c
+SOURCES = main.c noise.c
 MSVCSRC = $(patsubst %,<ClCompile Include=\"%\\\" \\/>,$(SOURCES))
 OBJ = $(SOURCES:.c=.o)
 DOXYFILE = documentation/Doxyfile
