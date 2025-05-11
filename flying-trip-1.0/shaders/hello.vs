@@ -6,6 +6,7 @@ layout(location = 2) in vec2 texCoord;
 
 uniform mat4 modelView, projection;
 uniform float time;
+uniform float speed;
 
 out float vPosHeight;
 
@@ -560,7 +561,7 @@ float snoise(vec4 P) {
 void main() {
     float y = noise(vec2(
         pos.x * 10.0f,
-        (pos.z * 10.0f) - time * 1.5f
+        (pos.z * 10.0f) - time * speed
     ));
 
     // la position dans l'espace de modélisation

@@ -11,10 +11,13 @@ extern void initNoiseTextures(void);
 extern void useNoiseTextures(GLuint pid, int shift);
 extern void unuseNoiseTextures(int shift);
 extern void freeNoiseTextures(void);
+static void keydown(int keycode);
 
 static GLuint _wW = 1920, _wH = 1080;
 static GLuint _gridId = 0;
 static GLuint _pId = 0;
+static GLenum _polygonMode = GL_FILL;
+static GLfloat _speed = 3.0f;
 
 int main(int argc, char ** argv) {
   if(!gl4duwCreateWindow(argc, argv, "Flying Trip", GL4DW_POS_CENTERED, GL4DW_POS_CENTERED,
@@ -25,8 +28,26 @@ int main(int argc, char ** argv) {
   init();
   atexit(sortie);
   gl4duwDisplayFunc(draw);
+  gl4duwKeyDownFunc(keydown);
   gl4duwMainLoop();
   return 0;
+}
+
+static void keydown(int keycode) {
+  switch(keycode) {
+  case SDLK_DOWN:
+    _speed -= 0.1;
+    break;
+  case SDLK_UP:
+    _speed += 0.1;
+    break;
+    case ' ':
+    _polygonMode = (_polygonMode == GL_FILL) ? GL_LINE : GL_FILL;
+    glPolygonMode(GL_FRONT_AND_BACK, _polygonMode);
+    break;
+  default:
+    break;
+  }
 }
 
 void init(void) {
@@ -57,6 +78,7 @@ void draw(void) {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
   glUseProgram(_pId);
   glUniform1f(glGetUniformLocation(_pId, "time"), time);
+  glUniform1f(glGetUniformLocation(_pId, "speed"), _speed);
 
   gl4duBindMatrix("modelView");
   gl4duLoadIdentityf();
