@@ -38,9 +38,7 @@ void init(void) {
   gl4duBindMatrix("projection");
   gl4duLoadIdentityf();
   
-  GLfloat bottom = (-1.0f * _wH) / _wW;
-  GLfloat top    = (1.0f * _wH) / _wW;
-  gl4duFrustumf(-1.0f, 1.0f, bottom, top, 1.0f, 100.0f);
+  gl4duOrthof(-1.0f, 1.0f, -1.0f, 1.0f, 1.0f, 100.0f);
 }
 
 void draw(void) {
