@@ -24,6 +24,8 @@ extern "C" {
   
   // from grid.c
   extern void grid(int state);
+    // from mandelbulbFractal.c
+    extern void mandelbulbFractal(int state);
 
 #ifdef __cplusplus
 }

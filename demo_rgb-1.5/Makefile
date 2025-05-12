@@ -21,7 +21,7 @@ PROGNAME = rgb
 VERSION = 1.5
 distdir = $(PACKNAME)_$(PROGNAME)-$(VERSION)
 HEADERS = animations/animations.h helpers/audioHelper.h
-SOURCES = animations/animations.c helpers/audioHelper.c window.c animations/grid.c
+SOURCES = animations/animations.c helpers/audioHelper.c window.c animations/grid.c animations/mandelbulbFractal.c
 MSVCSRC = $(patsubst %,<ClCompile Include=\"%\\\" \\/>,$(SOURCES))
 OBJ = $(SOURCES:.c=.o)
 DOXYFILE = documentation/Doxyfile
