@@ -13,7 +13,7 @@
  */
 
 #include <GL4D/gl4dh.h>
-#include "audioHelper.h"
+#include "helpers/audioHelper.h"
 #include <assert.h>
 #include <stdlib.h>
 #include <GL4D/gl4dg.h>

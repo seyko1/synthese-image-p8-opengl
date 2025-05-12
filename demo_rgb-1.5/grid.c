@@ -5,7 +5,7 @@
 #include <GL4D/gl4dg.h>
 #include <stdio.h>
 #include <math.h>
-#include "audioHelper.h"
+#include "helpers/audioHelper.h"
 
 #define HEIGHTS_SIZE 16
 

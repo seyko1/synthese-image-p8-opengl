@@ -20,13 +20,13 @@ PACKNAME = demo
 PROGNAME = rgb
 VERSION = 1.5
 distdir = $(PACKNAME)_$(PROGNAME)-$(VERSION)
-HEADERS = animations.h audioHelper.h
-SOURCES = animations.c audioHelper.c window.c grid.c
+HEADERS = animations.h helpers/audioHelper.h
+SOURCES = animations.c helpers/audioHelper.c window.c grid.c
 MSVCSRC = $(patsubst %,<ClCompile Include=\"%\\\" \\/>,$(SOURCES))
 OBJ = $(SOURCES:.c=.o)
 DOXYFILE = documentation/Doxyfile
 VSCFILES = $(PROGNAME).vcxproj $(PROGNAME).sln
-EXTRAFILES = COPYING $(wildcard shaders/*.?s images/*.png) $(VSCFILES) takeonme.mod
+EXTRAFILES = COPYING $(wildcard helpers/* shaders/*.?s images/*.png) $(VSCFILES) takeonme.mod
 DISTFILES = $(SOURCES) Makefile $(HEADERS) $(DOXYFILE) $(EXTRAFILES)
 # Traitements automatiques pour ajout de chemins et options (ne pas modifier)
 ifneq (,$(shell ls -d /usr/local/include 2>/dev/null | tail -n 1))

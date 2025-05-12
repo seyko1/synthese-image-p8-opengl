@@ -15,7 +15,7 @@
 #include <GL4D/gl4dh.h>
 #include <GL4D/gl4duw_SDL2.h>
 #include "animations.h"
-#include "audioHelper.h"
+#include "helpers/audioHelper.h"
 
 /* Prototypes des fonctions statiques contenues dans ce fichier C. */
 static void init(void);
