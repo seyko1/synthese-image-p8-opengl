@@ -14,7 +14,7 @@
 #include <GL4D/gl4du.h>
 #include <GL4D/gl4dh.h>
 #include <GL4D/gl4duw_SDL2.h>
-#include "animations.h"
+#include "animations/animations.h"
 #include "helpers/audioHelper.h"
 
 /* Prototypes des fonctions statiques contenues dans ce fichier C. */
@@ -28,12 +28,6 @@ static void keydown(int keycode);
  * NULL} */
 static GL4DHanime _animations[] = {
   { 50000, grid, NULL, NULL },
-  { 1000, grid, rouge, fondu },
-  { 1000, rouge, NULL, NULL },
-  { 2000, rouge, vert, fondu },
-  { 5000, vert, NULL, NULL },
-  { 2000, vert, bleu, fondu },
-  { 5000, bleu, NULL, NULL },
   {    0, NULL, NULL, NULL } /* Toujours laisser à la fin */
 };
 

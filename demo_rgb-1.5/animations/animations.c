@@ -85,51 +85,6 @@ void fondu(void (* a0)(int), void (* a1)(int), Uint32 t, Uint32 et, int state) {
   }
 }
 
-void rouge(int state) {
-  switch(state) {
-  case GL4DH_INIT:
-    return;
-  case GL4DH_FREE:
-    return;
-  case GL4DH_UPDATE_WITH_AUDIO:
-    return;
-  default:
-    glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
-    return;
-  }
-}
-
-void vert(int state) {
-  switch(state) {
-  case GL4DH_INIT:
-    return;
-  case GL4DH_FREE:
-    return;
-  case GL4DH_UPDATE_WITH_AUDIO:
-    return;
-  default:
-    glClearColor(0.0f, 1.0f, 0.0f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
-    return;
-  }
-}
-
-void bleu(int state) {
-  switch(state) {
-  case GL4DH_INIT:
-    return;
-  case GL4DH_FREE:
-    return;
-  case GL4DH_UPDATE_WITH_AUDIO:
-    return;
-  default:
-    glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
-    glClear(GL_COLOR_BUFFER_BIT);
-    return;
-  }
-}
-
 void animationsInit(void) {
   if (!_quadId) {
     _quadId = gl4dgGenQuadf();
