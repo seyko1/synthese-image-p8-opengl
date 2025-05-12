@@ -22,10 +22,10 @@ extern "C" {
   extern void fondu(void (* a0)(int), void (* a1)(int), Uint32 t, Uint32 et, int state);
   extern void animationsInit(void);
   
-  // from grid.c
-  extern void grid(int state);
-    // from mandelbulbFractal.c
-    extern void mandelbulbFractal(int state);
+  // from ondulations.c
+  extern void ondulations(int state);
+  // from mandelbulbFractal.c
+  extern void mandelbulbFractal(int state);
 
 #ifdef __cplusplus
 }

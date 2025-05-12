@@ -32,7 +32,7 @@ void shift(short v) {
 }
 
 static short moyenne = 0;
-void grid(int state) {
+void ondulations(int state) {
   switch(state) {
     case GL4DH_INIT:
       init();

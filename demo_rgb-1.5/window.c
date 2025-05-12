@@ -28,8 +28,8 @@ static void keydown(int keycode);
  * NULL} */
 static GL4DHanime _animations[] = {
   { 5000, mandelbulbFractal, NULL, NULL },
-  { 2000, mandelbulbFractal, grid, fondu },
-  { 5000, grid, NULL, NULL },
+  { 2000, mandelbulbFractal, ondulations, fondu },
+  { 5000, ondulations, NULL, NULL },
   {    0, NULL, NULL, NULL } /* Toujours laisser à la fin */
 };
 
