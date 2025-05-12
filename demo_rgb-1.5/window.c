@@ -27,12 +27,14 @@ static void keydown(int keycode);
  * ce tableau se termine toujours par l'élémént {0, NULL, NULL,
  * NULL} */
 static GL4DHanime _animations[] = {
-  { 50000, grid, NULL, NULL },
+  { 5000, mandelbulbFractal, NULL, NULL },
+  { 2000, mandelbulbFractal, grid, fondu },
+  { 5000, grid, NULL, NULL },
   {    0, NULL, NULL, NULL } /* Toujours laisser à la fin */
 };
 
 /*!\brief dimensions initiales de la fenêtre */
-static GLfloat _dim[] = {1024, 768};
+GLfloat _dim[] = { 1920, 1080 };
 
 /*!\brief fonction principale : initialise la fenêtre, OpenGL, audio
  * et lance la boucle principale (infinie).
