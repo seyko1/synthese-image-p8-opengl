@@ -9,11 +9,12 @@
 
 #define HEIGHTS_SIZE 16
 
+extern GLfloat _dim[];
+
 static void init(void);
 static void draw(void);
 static void sortie(void);
 
-static GLuint _wW = 1280, _wH = 1024;
 static GLuint _gridId = 0;
 static GLuint _pId = 0;
 static GLuint _tex = 0;
@@ -72,7 +73,7 @@ void init(void) {
   gl4duBindMatrix("projection");
   gl4duLoadIdentityf();
  
-  gl4duFrustumf(-0.1f, 0.1f, (-0.1f * _wH) / _wW, (0.1f * _wH) / _wW, 0.1f, 1000.0f); 
+  gl4duFrustumf(-0.1f, 0.1f, (-0.1f * _dim[1]) / _dim[0], (0.1f * _dim[1]) / _dim[0], 0.1f, 1000.0f); 
 }
 
 void draw(void) {
