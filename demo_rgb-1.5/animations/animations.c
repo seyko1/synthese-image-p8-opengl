@@ -53,6 +53,15 @@ void fondu(void (* a0)(int), void (* a1)(int), Uint32 t, Uint32 et, int state) {
     if(a0) a0(state);
     if(a1) a1(state);
     return;
+  case 4: // RESIZE 
+    printf("RESIZE TR FONDU \n");
+    glGetIntegerv( GL_VIEWPORT, vp );
+    for ( i = 0; i < 2; i++ ) {
+        glBindTexture( GL_TEXTURE_2D, tex[i] );
+        glTexImage2D( GL_TEXTURE_2D, 0, GL_RGBA, vp[2], vp[3], 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL );
+    }
+    glBindTexture( GL_TEXTURE_2D, 0 );
+    return;
   default: /* GL4DH_DRAW */
     /* RECUPERER L'ID DE LA DERNIERE TEXTURE ATTACHEE AU FRAMEBUFFER */
     glGetFramebufferAttachmentParameteriv(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_FRAMEBUFFER_ATTACHMENT_OBJECT_NAME, &tId);

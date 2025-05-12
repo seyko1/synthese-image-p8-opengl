@@ -76,6 +76,8 @@ static void init(void) {
 static void resize(int w, int h) {
   _dim[0] = w; _dim[1] = h;
   glViewport(0, 0, _dim[0], _dim[1]);
+  fondu(NULL,NULL,0,0,4);
+  gl4dhResize(w, h);
 }
 
 /*!\brief permet de gérer les évènements clavier-down.
