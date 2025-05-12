@@ -24,8 +24,12 @@ extern "C" {
   
   // from ondulations.c
   extern void ondulations(int state);
+  
   // from mandelbulbFractal.c
   extern void mandelbulbFractal(int state);
+  
+  // from gameoflife3D.c
+  extern void gameoflife3D(int state);
 
 #ifdef __cplusplus
 }
