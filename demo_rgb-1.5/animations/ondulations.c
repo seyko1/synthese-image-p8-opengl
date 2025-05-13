@@ -59,7 +59,7 @@ void ondulations(int state) {
 }
 
 void init(void) {
-  _pId = gl4duCreateProgram("<vs>shaders/grid.vs", "<fs>shaders/grid.fs", NULL);
+  _pId = gl4duCreateProgram("<vs>shaders/ondulations.vs", "<fs>shaders/ondulations.fs", NULL);
   _gridId = gl4dgGenGrid2df(_gridW, _gridH);
 
   glGenTextures(1, &_tex),
