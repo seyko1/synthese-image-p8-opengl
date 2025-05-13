@@ -56,8 +56,15 @@ void init(void) {
 
 void draw(void) {
   float time = gl4dGetElapsedTime() / 1000.0f;
-  // printf("elapsed %f\n", time);
   
+  /*
+   * Faire varier la vue de gauche à droite avec : 
+   * sin(vitesse du temps) * amplitude du mouvement
+   */
+  float xOffset = sinf(time) * 0.2f;
+  /* Faire varier l'inclinaison entre 0 et 10 degrés */
+  float rollAngle = sinf(time) * 10.0f;
+
   glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -68,7 +75,13 @@ void draw(void) {
 
   gl4duBindMatrix("modelView");
   gl4duLoadIdentityf();
-  gl4duLookAtf(0.0f, 1.0f, 1.0f, 0.0f, 0.7f, 0.0f, 0.0f, 1.0f, 0.0f);
+  gl4duRotatef(rollAngle, 1.0f, 0.0f, 0.0f); 
+
+  gl4duLookAtf(
+    xOffset, 1.0f, 1.0f,
+    xOffset, 0.7f, 0.0f,
+    0.0f, 1.0f, 0.0f
+  );
   gl4duScalef(7.0f, 1.0f, 6.0f);
   gl4duSendMatrices();
   
