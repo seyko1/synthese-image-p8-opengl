@@ -1,8 +1,10 @@
 #include <GL4D/gl4duw_SDL2.h>
+#include <GL4D/gl4df.h>
 #include <GL4D/gl4dg.h>
 #include <GL4D/gl4dh.h>
 #include <stdio.h>
 #include <math.h>
+#include "helpers/audioHelper.h"
 
 #define NB_CUBES 20
 
@@ -40,6 +42,7 @@ static const GLfloat colorDead[]  = { 1.0f, 1.0f, 1.0f, 0.5f };
 static GLint colorUniformLocation;
 static GLint isAliveUniformLocation;
 
+static GLboolean canUpdateGrid = GL_FALSE;
 void gameoflife3D(int state) {
   switch(state) {
     case GL4DH_INIT:
@@ -49,6 +52,22 @@ void gameoflife3D(int state) {
       sortie();
       return;
     case GL4DH_UPDATE_WITH_AUDIO:
+      int length = ahGetAudioStreamLength();
+      short * stream = (short*) ahGetAudioStream(); /* échantillon de 4096 valeurs */
+      int value = 0;
+      /* Avancer de 2 pour ne prendre qu'une des 2 valeurs du stéréo */
+      for (int i = 0; i < length / 4; ++i) {
+        // somme des 1024 valeurs d'oreille gauche
+        value += fabs(stream[2 * i]);
+      }
+      int moyenne = value / (length / 4);
+
+      if (moyenne > 10000) {
+        canUpdateGrid = GL_TRUE;
+      } else {
+        canUpdateGrid = GL_FALSE;
+      }
+      // printf("moy ? %d\n", moyenne);
       return;
     default:
       draw();
@@ -152,7 +171,6 @@ void draw(void) {
   
   float dt = get_dt();
   static GLfloat rot = 0.0f;
-  static float nextGenTimer = 0.0f;
   
   // Modifier la hue value
   colorAlive[0] += dt * 0.5f;
@@ -176,11 +194,7 @@ void draw(void) {
 
   glUseProgram(0);
 
-  nextGenTimer += dt;
-  if (nextGenTimer >= 0.05f) {
-    updateGrid();
-    nextGenTimer = 0.0f;
-  }
+  if (canUpdateGrid) updateGrid();
 
   /* Restaurer depth test et blend */
   if (!wasDepthEnabled) {
