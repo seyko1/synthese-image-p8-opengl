@@ -89,10 +89,13 @@ static double get_dt(void) {
 }
 
 void draw(void) {
+  GLboolean wasDepthEnabled = glIsEnabled(GL_DEPTH_TEST);
+  glEnable(GL_DEPTH_TEST);
+  
   glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
   glUseProgram(_pId);
-  glEnable(GL_DEPTH_TEST);
   
   double dt = get_dt();
   zTranslation += dt;
@@ -108,6 +111,10 @@ void draw(void) {
   glBindVertexArray(0);
 
   glUseProgram(0);
+
+  if (!wasDepthEnabled) {
+    glDisable(GL_DEPTH_TEST);
+  }
 }
 
 void sortie(void) {

@@ -14,12 +14,21 @@
 
 extern GLfloat _dim[];
 
+typedef struct {
+  GLboolean enabled;
+  GLint srcRGB, dstRGB;
+  GLint srcAlpha, dstAlpha;
+} BlendState;
+
 static void init(void);
 static void draw(void);
 static void sortie(void);
 
 static void updateGrid();
 static int neighboringStates(int x, int y, int z);
+
+static BlendState saveBlendState(void);
+static void restoreBlendState(const BlendState * state);
 
 static GLuint _cubeId = 0;
 static GLuint _pId = 0;
@@ -48,10 +57,6 @@ void gameoflife3D(int state) {
 }
 
 void init(void) {
-  /* Activer l'alpha pour le mode fil de fer */
-  glEnable(GL_BLEND);
-  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
   const float middle = NB_CUBES / 2;
   const int margin = 2;
   const int min = middle - margin;
@@ -111,6 +116,11 @@ void drawCube(int i, int j, int k) {
 
   GLboolean isAlive = grid[i][j][k] == GL_TRUE;
   const GLfloat * color = isAlive ? colorAlive : colorDead;
+
+  /*  Enregistrer le polygon mode */
+  GLint polygonMode[2];
+  glGetIntegerv(GL_POLYGON_MODE, polygonMode);
+  /* Définir le polygon mode pour le cube actuel */
   GLenum mode = isAlive ? GL_FILL : GL_LINE;
 
   gl4duPushMatrix();
@@ -122,21 +132,32 @@ void drawCube(int i, int j, int k) {
   glUniform4fv(colorUniformLocation, 1, color);
   gl4dgDraw(_cubeId);
   gl4duPopMatrix();
+
+  // Rétablir l'état initial du polygon mode
+  glPolygonMode(GL_FRONT_AND_BACK, polygonMode[0]);
 }
 
 void draw(void) {
-  glClearColor(0.7f, 0.7f, 0.7f, 1.0f);
+  /* Activer l'alpha pour le mode fil de fer */
+  BlendState blendState = saveBlendState();
+  glEnable(GL_BLEND);
+  glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+  
+  /* Sauvegarde du depth test mode */
+  GLboolean wasDepthEnabled = glIsEnabled(GL_DEPTH_TEST);
   glEnable(GL_DEPTH_TEST);
 
+  glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  
   float dt = get_dt();
   static GLfloat rot = 0.0f;
   static float nextGenTimer = 0.0f;
-
+  
   // Modifier la hue value
   colorAlive[0] += dt * 0.5f;
   if (colorAlive[0] > 1.0f) colorAlive[0] -= 1.0f;
-
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+  
   glUseProgram(_pId);
 
   gl4duBindMatrix("view");
@@ -160,6 +181,12 @@ void draw(void) {
     updateGrid();
     nextGenTimer = 0.0f;
   }
+
+  /* Restaurer depth test et blend */
+  if (!wasDepthEnabled) {
+    glDisable(GL_DEPTH_TEST);
+  }
+  restoreBlendState(&blendState);
 
   rot += 2.0f * M_PI * get_dt();
 }
@@ -211,6 +238,27 @@ int neighboringStates(int x, int y, int z) {
 
   sum -= grid[x][y][z];
   return sum;
+}
+
+/* Sauvegarde l'état du blend et la façon dont il est fait avant d'y toucher dans le contexte openGL */
+BlendState saveBlendState(void) {
+  BlendState state;
+  state.enabled = glIsEnabled(GL_BLEND);
+  glGetIntegerv(GL_BLEND_SRC_RGB, &state.srcRGB);
+  glGetIntegerv(GL_BLEND_DST_RGB, &state.dstRGB);
+  glGetIntegerv(GL_BLEND_SRC_ALPHA, &state.srcAlpha);
+  glGetIntegerv(GL_BLEND_DST_ALPHA, &state.dstAlpha);
+  return state;
+}
+
+/* Restaure le blend dans le contexte openGL */
+void restoreBlendState(const BlendState *state) {
+  if (state->enabled)
+    glEnable(GL_BLEND);
+  else
+    glDisable(GL_BLEND);
+
+  glBlendFuncSeparate(state->srcRGB, state->dstRGB, state->srcAlpha, state->dstAlpha);
 }
 
 void sortie(void) { }
