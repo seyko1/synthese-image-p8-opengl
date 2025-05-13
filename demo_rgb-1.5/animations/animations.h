@@ -31,8 +31,11 @@ extern "C" {
   // from gameoflife3D.c
   extern void gameoflife3D(int state);
 
-    // from flyingTrip.c
-    extern void flyingTrip(int state);
+  // from flyingTrip.c
+  extern void flyingTrip(int state);
+
+  // from sphericalInversion.c
+  extern void sphericalInversion(int state);
 
 #ifdef __cplusplus
 }

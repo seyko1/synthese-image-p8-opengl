@@ -21,7 +21,7 @@ PROGNAME = rgb
 VERSION = 1.5
 distdir = $(PACKNAME)_$(PROGNAME)-$(VERSION)
 HEADERS = animations/animations.h helpers/audioHelper.h
-SOURCES = animations/animations.c helpers/audioHelper.c helpers/noise.c window.c animations/ondulations.c animations/mandelbulbFractal.c animations/gameoflife3D.c animations/flyingTrip.c
+SOURCES = animations/animations.c helpers/audioHelper.c helpers/noise.c window.c animations/ondulations.c animations/mandelbulbFractal.c animations/gameoflife3D.c animations/flyingTrip.c animations/sphericalInversion.c
 MSVCSRC = $(patsubst %,<ClCompile Include=\"%\\\" \\/>,$(SOURCES))
 OBJ = $(SOURCES:.c=.o)
 DOXYFILE = documentation/Doxyfile

@@ -34,6 +34,8 @@ static GL4DHanime _animations[] = {
   { 5000, mandelbulbFractal, NULL, NULL },
   { 2000, mandelbulbFractal, ondulations, fondu },
   { 5000, ondulations, NULL, NULL },
+  { 2000, ondulations, sphericalInversion, fondu },
+  { 5000, sphericalInversion, NULL, NULL },
   {    0, NULL, NULL, NULL } /* Toujours laisser à la fin */
 };
 
