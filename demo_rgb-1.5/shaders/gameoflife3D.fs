@@ -12,7 +12,7 @@ vec3 hsb2rgb(in vec3 c) {
 
 void main() {
      if (isAlive == 1) {
-        fragColor = vec4(hsb2rgb(vec3(color.xyz)), 1.0);
+        fragColor = vec4(hsb2rgb(color.xyz), 0.7);
      } else {
         fragColor = color;
      }

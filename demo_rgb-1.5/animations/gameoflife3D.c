@@ -36,13 +36,92 @@ static GLuint _cubeId = 0;
 static GLuint _pId = 0;
 
 static GLboolean grid[NB_CUBES][NB_CUBES][NB_CUBES];
-static GLfloat colorAlive[]       = { 0.6f, 1.0f, 0.5f, 1.0f };
-static const GLfloat colorDead[]  = { 1.0f, 1.0f, 1.0f, 0.5f };
+static GLfloat colorAlive[]       = { 0.5f, 0.7f, 0.4f, 1.0f };
+static const GLfloat colorDead[]  = { 1.0f, 1.0f, 1.0f, 0.4f };
 
 static GLint colorUniformLocation;
 static GLint isAliveUniformLocation;
 
 static GLboolean canUpdateGrid = GL_FALSE;
+
+struct gstatic_t {
+  GLuint buffer;
+};
+
+struct geom_t {
+  GLuint vao;
+  void * geom;
+};
+
+typedef struct geom_t geom_t;
+typedef struct gstatic_t gstatic_t;
+
+static geom_t * _cubeEdgeId = NULL;
+
+static geom_t * genCubeEdges() {
+  static GLfloat cube_data[] = {
+    /* front */
+    -1.0f, -1.0f, 1.0f,
+     1.0f, -1.0f, 1.0f,
+     1.0f,  1.0f, 1.0f,
+    -1.0f,  1.0f, 1.0f,
+    /* back */
+     1.0f, -1.0f, -1.0f,
+    -1.0f, -1.0f, -1.0f,
+    -1.0f,  1.0f, -1.0f,
+     1.0f,  1.0f, -1.0f,
+    /* right */
+    1.0f, -1.0f,  1.0f,
+    1.0f, -1.0f, -1.0f,
+    1.0f,  1.0f, -1.0f,
+    1.0f,  1.0f,  1.0f,
+    /* left */
+    -1.0f, -1.0f, -1.0f,
+    -1.0f, -1.0f,  1.0f,
+    -1.0f,  1.0f,  1.0f,
+    -1.0f,  1.0f, -1.0f,
+    /* top */
+    -1.0f, 1.0f,  1.0f,
+     1.0f, 1.0f,  1.0f,
+     1.0f, 1.0f, -1.0f,
+    -1.0f, 1.0f, -1.0f,
+    /* bottom */
+    -1.0f, -1.0f, -1.0f,
+     1.0f, -1.0f, -1.0f,
+     1.0f, -1.0f,  1.0f,
+    -1.0f, -1.0f,  1.0f,
+  };
+  geom_t * geom = malloc(sizeof *geom);
+  assert(geom);
+  gstatic_t * q = malloc(sizeof *q);
+  assert(q);
+  geom->geom = q;
+
+  glGenVertexArrays(1, &geom->vao);
+  glBindVertexArray(geom->vao);
+
+  glEnableVertexAttribArray(0); 
+  
+  glGenBuffers(1, &(q->buffer));
+  glBindBuffer(GL_ARRAY_BUFFER, q->buffer);
+  glBufferData(GL_ARRAY_BUFFER, sizeof cube_data, cube_data, GL_STATIC_DRAW);
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, (const void *)0);
+  glBindVertexArray(0);
+  glBindBuffer(GL_ARRAY_BUFFER, 0);
+  return geom;
+}
+
+void drawCubeEdges(GLint vao) {
+  glBindVertexArray(vao);
+  glDrawArrays(GL_LINE_LOOP, 0, 4);
+  glDrawArrays(GL_LINE_LOOP, 4, 4);
+  glDrawArrays(GL_LINE_LOOP, 8, 4);
+  glDrawArrays(GL_LINE_LOOP, 12, 4);
+  glDrawArrays(GL_LINE_LOOP, 16, 4);
+  glDrawArrays(GL_LINE_LOOP, 20, 4);
+  glBindVertexArray(0);
+}
+
 void gameoflife3D(int state) {
   switch(state) {
     case GL4DH_INIT:
@@ -97,6 +176,8 @@ void init(void) {
     }
   }
   _cubeId = gl4dgGenCubef();
+  _cubeEdgeId = genCubeEdges();
+
   // Créer un programme shader à partir de hello.vs et hello.fs, qui pourra s'occuper du rendu.
   _pId = gl4duCreateProgram("<vs>shaders/gameoflife3D.vs", "<fs>shaders/gameoflife3D.fs", NULL);
   gl4duGenMatrix(GL_FLOAT, "view");
@@ -126,7 +207,7 @@ static double get_dt(void) {
 }
 
 void drawCube(int i, int j, int k) {
-  static const float scale = 0.08f;
+  static const float scale = 0.04f;
 
   // Ramener à l'échelle [-1;1]
   float x  = 2.0f * (i / (NB_CUBES - 1.0f)) - 1.0f;
@@ -149,7 +230,17 @@ void drawCube(int i, int j, int k) {
   glPolygonMode(GL_FRONT_AND_BACK, mode);
   glUniform1i(isAliveUniformLocation, isAlive);
   glUniform4fv(colorUniformLocation, 1, color);
-  gl4dgDraw(_cubeId);
+  
+  if (isAlive) {
+    gl4dgDraw(_cubeId);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
+    glUniform4fv(colorUniformLocation, 1, colorDead);
+    glLineWidth(2.0);
+    drawCubeEdges(_cubeEdgeId->vao);
+    glLineWidth(1.0);
+  } else {
+    drawCubeEdges(_cubeEdgeId->vao);
+  }
   gl4duPopMatrix();
 
   // Rétablir l'état initial du polygon mode
@@ -173,7 +264,7 @@ void draw(void) {
   static GLfloat rot = 0.0f;
   
   // Modifier la hue value
-  colorAlive[0] += dt * 0.5f;
+  colorAlive[0] += dt * 0.2f;
   if (colorAlive[0] > 1.0f) colorAlive[0] -= 1.0f;
   
   glUseProgram(_pId);
