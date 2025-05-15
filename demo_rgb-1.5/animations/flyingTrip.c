@@ -44,12 +44,6 @@ void init(void) {
 
   // Appliquer une matrice de projection, elle sera envoyé lors de l'appel à sendMatrices()
   gl4duGenMatrix(GL_FLOAT, "projection");
-  gl4duBindMatrix("projection");
-  gl4duLoadIdentityf();
-  
-  GLfloat bottom = (-1.0f * _dim[1]) / _dim[0];
-  GLfloat top    = (1.0f * _dim[1]) / _dim[0];
-  gl4duFrustumf(-1.0f * 0.1f, 1.0f * 0.1f, bottom * 0.1f, top * 0.1f, 0.1f, 100.0f);
 
   // glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 }
@@ -69,6 +63,13 @@ void draw(void) {
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   glUseProgram(_pId);
+
+  gl4duBindMatrix("projection");
+  gl4duLoadIdentityf();
+  
+  GLfloat bottom = (-1.0f * _dim[1]) / _dim[0];
+  GLfloat top    = (1.0f * _dim[1]) / _dim[0];
+  gl4duFrustumf(-1.0f * 0.1f, 1.0f * 0.1f, bottom * 0.1f, top * 0.1f, 0.1f, 100.0f);
 
   glUniform1f(glGetUniformLocation(_pId, "time"), time);
   glUniform1f(glGetUniformLocation(_pId, "speed"), _speed);
