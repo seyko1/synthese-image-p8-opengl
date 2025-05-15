@@ -54,12 +54,6 @@ void init(void) {
 
   // Appliquer une matrice de projection, elle sera envoyé lors de l'appel à sendMatrices()
   gl4duGenMatrix(GL_FLOAT, "projection");
-  gl4duBindMatrix("projection");
-  gl4duLoadIdentityf();
-  
-  GLfloat bottom = (-1.0f * _dim[1]) / _dim[0];
-  GLfloat top    = (1.0f * _dim[1]) / _dim[0];
-  gl4duFrustumf(-1.0f, 1.0f, bottom, top, 1.0f, 1000.0f);
 
   initPoints();
 
@@ -97,6 +91,12 @@ void draw(void) {
 
   glUseProgram(_pId);
   
+  gl4duBindMatrix("projection");
+  gl4duLoadIdentityf();  
+  GLfloat bottom = (-1.0f * _dim[1]) / _dim[0];
+  GLfloat top    = (1.0f * _dim[1]) / _dim[0];
+  gl4duFrustumf(-1.0f, 1.0f, bottom, top, 1.0f, 1000.0f);
+
   double dt = get_dt();
   zTranslation += dt;
 
