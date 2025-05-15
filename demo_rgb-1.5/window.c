@@ -36,6 +36,8 @@ static GL4DHanime _animations[] = {
   { 5000, ondulations, NULL, NULL },
   { 2000, ondulations, sphericalInversion, fondu },
   { 5000, sphericalInversion, NULL, NULL },
+  { 2000, sphericalInversion, credit, fondu },
+  { 5000, credit, NULL, NULL },
   {    0, NULL, NULL, NULL } /* Toujours laisser à la fin */
 };
 
@@ -57,7 +59,7 @@ int main(int argc, char ** argv) {
   gl4duwKeyDownFunc(keydown);
   gl4duwDisplayFunc(gl4dhDraw);
 
-  ahInitAudio("takeonme.mod");
+  ahInitAudio("psychosi.mid");
   gl4duwMainLoop();
   return 0;
 }
