@@ -298,14 +298,9 @@ void draw(void) {
 
   gl4duScalef(10.0f, 10.0f, 10.0f);
   gl4duSendMatrices();
-
-  glDisable(GL_CULL_FACE);
-
   useNoiseTextures(_pId, 0);
   gl4dgDraw(_sphereId);
   unuseNoiseTextures(0);
-
-  glEnable(GL_CULL_FACE);
   
   gl4duLoadIdentityf();
   glUniform1i(glGetUniformLocation(_pId, "useNoise"), 0);
@@ -313,7 +308,7 @@ void draw(void) {
   for (int i = 0; i < NB_CUBES; ++i)
     for (int j = 0; j < NB_CUBES; ++j)
       for (int k = 0; k < NB_CUBES; ++k)
-       drawCube(i, j, k);
+        drawCube(i, j, k);
 
   glUseProgram(0);
 
