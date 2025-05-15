@@ -30,7 +30,8 @@ static GLuint _vbo = 0;
 static MandelPosition points[MAX_POINTS];
 static int point_count = 0;
 
-static float zTranslation = -400.0f;
+static float zTranslation = -800.0f; /* Prendre du recul */
+static float angleRotation = 0.0f;
 
 void mandelbulbFractal(int state) {
   switch(state) {
@@ -75,7 +76,7 @@ void init(void) {
 }
 
 static double get_dt(void) {
-  static double t0 = 0.0f;
+  static double t0 = 3.0f; // t0 selon le temps écoulé des anim précédentes
   double t = gl4dGetElapsedTime();
   double dt = (t - t0) / 60.0f;
   t0 = t;
@@ -98,15 +99,19 @@ void draw(void) {
   gl4duFrustumf(-1.0f, 1.0f, bottom, top, 1.0f, 1000.0f);
 
   double dt = get_dt();
-  zTranslation += dt;
+  float speed = 3.0f;
+
+  zTranslation += dt * speed;
+  angleRotation += dt * speed;
 
   gl4duBindMatrix("modelView");
   gl4duLoadIdentityf();
   gl4duTranslatef(0.0f, 0.0f, zTranslation);
+  gl4duRotatef(angleRotation, 1.0f, 1.0f, 1.0f);
   gl4duSendMatrices();
   
   glBindVertexArray(_vao);
-  glPointSize(2.0f);
+  glPointSize(1.0f);
   glDrawArrays(GL_POINTS, 0, point_count);
   glBindVertexArray(0);
 
