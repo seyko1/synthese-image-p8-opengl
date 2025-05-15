@@ -11,7 +11,7 @@ vec3 hsb2rgb(in vec3 c) {
 
 void main() {
     float brightness = vDepth / 255;
-    vec3 hsb = vec3(1.0, 1.0, brightness); 
+    vec3 hsb = vec3(brightness, 1.0, 0.5); 
 
     fragColor = vec4(hsb2rgb(hsb), 1.0);
 }
