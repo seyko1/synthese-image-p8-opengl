@@ -19,6 +19,7 @@ extern void freeNoiseTextures(void);
 
 static GLuint _gridId = 0;
 static GLuint _pId = 0;
+static GLuint _sphereId = 0;
 static GLfloat _speed = 3.0f;
 
 void flyingTrip(int state) {
@@ -40,6 +41,7 @@ void flyingTrip(int state) {
 void init(void) {
   initNoiseTextures();
   _gridId = gl4dgGenGrid2df(_dim[0] / 5, _dim[1] / 5);
+  _sphereId = gl4dgGenSpheref(3, 3);
   // Créer un programme shader à partir de hello.vs et hello.fs, qui pourra s'occuper du rendu.
   _pId = gl4duCreateProgram("<vs>shaders/flyingTrip.vs", "<fs>shaders/flyingTrip.fs", NULL);
   gl4duGenMatrix(GL_FLOAT, "modelView");
@@ -76,6 +78,15 @@ void draw(void) {
 
   gl4duBindMatrix("modelView");
   gl4duLoadIdentityf();
+
+  glUniform1i(glGetUniformLocation(_pId, "isSky"), 1);
+
+  gl4duScalef(10.0f, 10.0f, 10.0f);
+  gl4duSendMatrices();
+  gl4dgDraw(_sphereId);
+
+  gl4duLoadIdentityf();
+  glUniform1i(glGetUniformLocation(_pId, "isSky"), 0);
   gl4duRotatef(rollAngle, 1.0f, 0.0f, 0.0f); 
 
   gl4duLookAtf(
