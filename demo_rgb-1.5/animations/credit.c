@@ -103,7 +103,6 @@ static void initText(GLuint * texId, const char * text)
 
 static void init(void)
 {
-    glEnable(GL_DEPTH_TEST);
     glClearColor(1.0f, 0.7f, 0.7f, 1.0f);
     _pId = gl4duCreateProgram("<vs>shaders/credits.vs", "<fs>shaders/credits.fs", NULL);
     _quad = gl4dgGenQuadf();
