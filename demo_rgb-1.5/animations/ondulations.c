@@ -96,6 +96,7 @@ void draw(void) {
   glTexImage2D(GL_TEXTURE_2D, 0, GL_R16, 1, HEIGHTS_SIZE, 0, GL_RED, GL_SHORT, _hauteurs);
   glUniform1i(glGetUniformLocation(_pId, "tex"), 0);
   glUniform2fv(glGetUniformLocation(_pId, "pas"), 1, pas);
+  glUniform1f(glGetUniformLocation(_pId, "elapsed"), (GLfloat)gl4dGetElapsedTime() / 1000);
   
   gl4duBindMatrix("modelView");
   gl4duLoadIdentityf();
