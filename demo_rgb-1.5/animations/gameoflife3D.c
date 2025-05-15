@@ -187,19 +187,10 @@ void init(void) {
   _sphereId = gl4dgGenSpheref(3, 3);
   _cubeEdgeId = genCubeEdges();
 
-  // Créer un programme shader à partir de hello.vs et hello.fs, qui pourra s'occuper du rendu.
   _pId = gl4duCreateProgram("<vs>shaders/gameoflife3D.vs", "<fs>shaders/gameoflife3D.fs", NULL);
   gl4duGenMatrix(GL_FLOAT, "view");
   gl4duGenMatrix(GL_FLOAT, "model");
-
-  // Appliquer une matrice de projection, elle sera envoyé lors de l'appel à sendMatrices()
   gl4duGenMatrix(GL_FLOAT, "projection");
-  gl4duBindMatrix("projection");
-  gl4duLoadIdentityf();
-  
-  GLfloat bottom = (-1.0f * _dim[1]) / _dim[0];
-  GLfloat top    = (1.0f * _dim[1]) / _dim[0];
-  gl4duFrustumf(-1.0f, 1.0f, bottom, top, 1.0f, 100.0f);
 
   colorUniformLocation = glGetUniformLocation(_pId, "color");
   isAliveUniformLocation = glGetUniformLocation(_pId, "isAlive");
@@ -277,6 +268,13 @@ void draw(void) {
   if (colorAlive[0] > 1.0f) colorAlive[0] -= 1.0f;
   
   glUseProgram(_pId);
+
+  gl4duBindMatrix("projection");
+  gl4duLoadIdentityf();
+  
+  GLfloat bottom = (-1.0f * _dim[1]) / _dim[0];
+  GLfloat top    = (1.0f * _dim[1]) / _dim[0];
+  gl4duFrustumf(-1.0f, 1.0f, bottom, top, 1.0f, 100.0f);
 
   gl4duBindMatrix("view");
   gl4duLoadIdentityf();
