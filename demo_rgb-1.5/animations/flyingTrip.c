@@ -9,6 +9,8 @@ static void draw(void);
 static void sortie(void);
 
 extern GLfloat _dim[];
+extern GLfloat _dimBottom;
+extern GLfloat _dimTop;
 
 extern void initNoiseTextures(void);
 extern void useNoiseTextures(GLuint pid, int shift);
@@ -66,10 +68,8 @@ void draw(void) {
 
   gl4duBindMatrix("projection");
   gl4duLoadIdentityf();
-  
-  GLfloat bottom = (-1.0f * _dim[1]) / _dim[0];
-  GLfloat top    = (1.0f * _dim[1]) / _dim[0];
-  gl4duFrustumf(-1.0f * 0.1f, 1.0f * 0.1f, bottom * 0.1f, top * 0.1f, 0.1f, 100.0f);
+
+  gl4duFrustumf(-1.0f * 0.1f, 1.0f * 0.1f, _dimBottom * 0.1f, _dimTop * 0.1f, 0.1f, 100.0f);
 
   glUniform1f(glGetUniformLocation(_pId, "time"), time);
   glUniform1f(glGetUniformLocation(_pId, "speed"), _speed);

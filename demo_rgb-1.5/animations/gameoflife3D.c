@@ -20,6 +20,8 @@ extern void unuseNoiseTextures(int shift);
 extern void freeNoiseTextures(void);
 
 extern GLfloat _dim[];
+extern GLfloat _dimBottom;
+extern GLfloat _dimTop;
 
 typedef struct {
   GLboolean enabled;
@@ -272,9 +274,7 @@ void draw(void) {
   gl4duBindMatrix("projection");
   gl4duLoadIdentityf();
   
-  GLfloat bottom = (-1.0f * _dim[1]) / _dim[0];
-  GLfloat top    = (1.0f * _dim[1]) / _dim[0];
-  gl4duFrustumf(-1.0f, 1.0f, bottom, top, 1.0f, 100.0f);
+  gl4duFrustumf(-1.0f, 1.0f, _dimBottom, _dimTop, 1.0f, 100.0f);
 
   gl4duBindMatrix("view");
   gl4duLoadIdentityf();

@@ -11,6 +11,9 @@
 
 extern GLfloat _dim[];
 
+static GLfloat _dimBottom;
+static GLfloat _dimTop;
+
 static void init(void);
 static void draw(void);
 static void sortie(void);
@@ -59,6 +62,9 @@ void ondulations(int state) {
 }
 
 void init(void) {
+  _dimBottom = (-0.1f * _dim[1]) / _dim[0];
+  _dimTop = (0.1f * _dim[1]) / _dim[0];
+
   _pId = gl4duCreateProgram("<vs>shaders/ondulations.vs", "<fs>shaders/ondulations.fs", NULL);
   _gridId = gl4dgGenGrid2df(_gridW, _gridH);
 
@@ -70,19 +76,19 @@ void init(void) {
 
   gl4duGenMatrix(GL_FLOAT, "modelView");
   gl4duGenMatrix(GL_FLOAT, "projection");
-  gl4duBindMatrix("projection");
-  gl4duLoadIdentityf();
- 
-  gl4duFrustumf(-0.1f, 0.1f, (-0.1f * _dim[1]) / _dim[0], (0.1f * _dim[1]) / _dim[0], 0.1f, 1000.0f); 
 }
 
 void draw(void) {
   GLfloat pas[] = { 1.0f / (_gridW - 1.0f), 1.0f / (_gridH - 1.0f) };
-
+  
   glClearColor(0.0f, 0.7f, 0.7f, 1.0f);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
+  
   glUseProgram(_pId);
+  
+  gl4duBindMatrix("projection");
+  gl4duLoadIdentityf();
+  gl4duFrustumf(-0.1f, 0.1f, _dimBottom, _dimTop, 0.1f, 1000.0f); 
   
   glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_2D, _tex);

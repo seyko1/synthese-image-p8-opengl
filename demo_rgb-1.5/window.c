@@ -43,6 +43,7 @@ static GL4DHanime _animations[] = {
 
 /*!\brief dimensions initiales de la fenêtre */
 GLfloat _dim[] = { 1920, 1080 };
+GLfloat _dimBottom, _dimTop;
 
 /*!\brief fonction principale : initialise la fenêtre, OpenGL, audio
  * et lance la boucle principale (infinie).
@@ -72,6 +73,8 @@ static void init(void) {
   glClearColor(0.2f, 0.2f, 0.2f, 0.0f);
   gl4dhInit(_animations, _dim[0], _dim[1], animationsInit);
   resize(_dim[0], _dim[1]);
+  _dimBottom = (-1.0f * _dim[1]) / _dim[0];
+  _dimTop = (1.0f * _dim[1]) / _dim[0];
 }
 
 /*!\brief paramétre la vue (viewPort) OpenGL en fonction des

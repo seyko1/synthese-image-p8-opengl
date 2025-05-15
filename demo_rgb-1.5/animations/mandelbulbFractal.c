@@ -11,6 +11,8 @@
 #define MAX_POINTS (DIM * DIM * DIM)
 
 extern GLfloat _dim[];
+extern GLfloat _dimBottom;
+extern GLfloat _dimTop;
 
 static void init(void);
 static void draw(void);
@@ -94,9 +96,7 @@ void draw(void) {
   
   gl4duBindMatrix("projection");
   gl4duLoadIdentityf();  
-  GLfloat bottom = (-1.0f * _dim[1]) / _dim[0];
-  GLfloat top    = (1.0f * _dim[1]) / _dim[0];
-  gl4duFrustumf(-1.0f, 1.0f, bottom, top, 1.0f, 1000.0f);
+  gl4duFrustumf(-1.0f, 1.0f, _dimBottom, _dimTop, 1.0f, 1000.0f);
 
   double dt = get_dt();
   float speed = 3.0f;

@@ -9,6 +9,8 @@ static void draw(void);
 static void quit(void);
 
 extern GLfloat _dim[];
+extern GLfloat _dimBottom;
+extern GLfloat _dimTop;
 
 static GLuint _pId = 0;
 static GLuint _quad = 0;
@@ -146,9 +148,7 @@ static void draw(void)
     
     gl4duBindMatrix("projectionMatrix");
     gl4duLoadIdentityf();
-    GLfloat bottom = (-1.0f * _dim[1]) / _dim[0];
-    GLfloat top    = (1.0f * _dim[1]) / _dim[0];
-    gl4duOrthof(-1.0f, 1.0f, bottom, top, 1.0f, -1.0f);
+    gl4duOrthof(-1.0f, 1.0f, _dimBottom, _dimTop, 1.0f, -1.0f);
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, _texId);
