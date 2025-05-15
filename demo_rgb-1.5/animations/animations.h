@@ -36,6 +36,9 @@ extern "C" {
 
   // from sphericalInversion.c
   extern void sphericalInversion(int state);
+  
+  // from credit.c
+  extern void credit(int state);
 
 #ifdef __cplusplus
 }

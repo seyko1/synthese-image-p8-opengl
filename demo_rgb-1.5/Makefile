@@ -21,7 +21,9 @@ PROGNAME = rgb
 VERSION = 1.5
 distdir = $(PACKNAME)_$(PROGNAME)-$(VERSION)
 HEADERS = animations/animations.h helpers/audioHelper.h
-SOURCES = animations/animations.c helpers/audioHelper.c helpers/noise.c window.c animations/ondulations.c animations/mandelbulbFractal.c animations/gameoflife3D.c animations/flyingTrip.c animations/sphericalInversion.c
+SOURCES = animations/animations.c helpers/audioHelper.c helpers/noise.c window.c \
+		  animations/ondulations.c animations/mandelbulbFractal.c animations/gameoflife3D.c \
+		  animations/flyingTrip.c animations/sphericalInversion.c animations/credit.c
 MSVCSRC = $(patsubst %,<ClCompile Include=\"%\\\" \\/>,$(SOURCES))
 OBJ = $(SOURCES:.c=.o)
 DOXYFILE = documentation/Doxyfile
@@ -49,7 +51,7 @@ else
         LDFLAGS += -lGL
 endif
 CPPFLAGS += $(shell sdl2-config --cflags)
-LDFLAGS  += -lGL4Dummies $(shell sdl2-config --libs) -lSDL2_mixer 
+LDFLAGS  += -lGL4Dummies $(shell sdl2-config --libs) -lSDL2_mixer -lSDL2_image -lSDL2_ttf
 all: $(PROGNAME)
 $(PROGNAME): $(OBJ)
 	$(CC) $(OBJ) $(LDFLAGS) -o $(PROGNAME)
