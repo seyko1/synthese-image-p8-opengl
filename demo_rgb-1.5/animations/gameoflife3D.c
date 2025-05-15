@@ -14,6 +14,11 @@
 #define BIRTH_MIN 1
 #define BIRTH_MAX 10
 
+extern void initNoiseTextures(void);
+extern void useNoiseTextures(GLuint pid, int shift);
+extern void unuseNoiseTextures(int shift);
+extern void freeNoiseTextures(void);
+
 extern GLfloat _dim[];
 
 typedef struct {
@@ -33,6 +38,7 @@ static BlendState saveBlendState(void);
 static void restoreBlendState(const BlendState * state);
 
 static GLuint _cubeId = 0;
+static GLuint _sphereId = 0;
 static GLuint _pId = 0;
 
 static GLboolean grid[NB_CUBES][NB_CUBES][NB_CUBES];
@@ -141,7 +147,7 @@ void gameoflife3D(int state) {
       }
       int moyenne = value / (length / 4);
 
-      if (moyenne > 10000) {
+      if (moyenne > 5000) {
         canUpdateGrid = GL_TRUE;
       } else {
         canUpdateGrid = GL_FALSE;
@@ -155,6 +161,8 @@ void gameoflife3D(int state) {
 }
 
 void init(void) {
+  initNoiseTextures();
+
   const float middle = NB_CUBES / 2;
   const int margin = 2;
   const int min = middle - margin;
@@ -176,6 +184,7 @@ void init(void) {
     }
   }
   _cubeId = gl4dgGenCubef();
+  _sphereId = gl4dgGenSpheref(3, 3);
   _cubeEdgeId = genCubeEdges();
 
   // Créer un programme shader à partir de hello.vs et hello.fs, qui pourra s'occuper du rendu.
@@ -271,12 +280,35 @@ void draw(void) {
 
   gl4duBindMatrix("view");
   gl4duLoadIdentityf();
-  gl4duLookAtf(0.0f, 1.5f, 3.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+
+  float radius = 3.0f;
+  float camX = radius * sinf(rot);
+  float camZ = radius * cosf(rot);
+  float camY = 1.2f + 0.3f * sinf(rot * 0.5f);
+
+  gl4duLookAtf(camX, camY, camZ,
+               0.0f, 0.0f, 0.0f,
+               0.0f, 1.0f, 0.0f);
 
   gl4duBindMatrix("model");
   gl4duLoadIdentityf();
 
-  gl4duRotatef(rot, 0.0f, 1.0f, 0.0f);
+  glUniform1i(glGetUniformLocation(_pId, "useNoise"), 1);
+  glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
+
+  gl4duScalef(10.0f, 10.0f, 10.0f);
+  gl4duSendMatrices();
+
+  glDisable(GL_CULL_FACE);
+
+  useNoiseTextures(_pId, 0);
+  gl4dgDraw(_sphereId);
+  unuseNoiseTextures(0);
+
+  glEnable(GL_CULL_FACE);
+  
+  gl4duLoadIdentityf();
+  glUniform1i(glGetUniformLocation(_pId, "useNoise"), 0);
 
   for (int i = 0; i < NB_CUBES; ++i)
     for (int j = 0; j < NB_CUBES; ++j)
@@ -293,7 +325,7 @@ void draw(void) {
   }
   restoreBlendState(&blendState);
 
-  rot += 2.0f * M_PI * get_dt();
+  rot += 0.02f * M_PI * get_dt();
 }
 
 void updateGrid() {
@@ -366,4 +398,6 @@ void restoreBlendState(const BlendState *state) {
   glBlendFuncSeparate(state->srcRGB, state->dstRGB, state->srcAlpha, state->dstAlpha);
 }
 
-void sortie(void) { }
+void sortie(void) {
+  freeNoiseTextures();
+}

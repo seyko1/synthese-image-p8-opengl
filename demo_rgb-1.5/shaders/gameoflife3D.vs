@@ -6,6 +6,9 @@ layout(location = 2) in vec2 texCoord;
 
 uniform mat4 model, view, projection;
 
+out vec3 vPos;
+
 void main() {
     gl_Position = projection * view * model * vec4(pos, 1.0);
+    vPos = pos;
 }
