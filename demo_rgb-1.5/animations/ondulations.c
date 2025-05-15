@@ -78,8 +78,18 @@ void init(void) {
   gl4duGenMatrix(GL_FLOAT, "projection");
 }
 
+static double get_dt(void) {
+  static double t0 = 0.0f;
+  double t = gl4dGetElapsedTime();
+  double dt = (t - t0) / 100.0f;
+  t0 = t;
+  return dt;
+}
+
 void draw(void) {
   GLfloat pas[] = { 1.0f / (_gridW - 1.0f), 1.0f / (_gridH - 1.0f) };
+
+  static GLfloat rot = 0.0f;
   
   glClearColor(0.0f, 0.7f, 0.7f, 1.0f);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -88,7 +98,7 @@ void draw(void) {
   
   gl4duBindMatrix("projection");
   gl4duLoadIdentityf();
-  gl4duFrustumf(-0.1f, 0.1f, _dimBottom, _dimTop, 0.1f, 1000.0f); 
+  gl4duFrustumf(-0.1f, 0.1f, _dimBottom + 0.02f, _dimTop - 0.02f, 0.1f, 1000.0f); 
   
   glActiveTexture(GL_TEXTURE0);
   glBindTexture(GL_TEXTURE_2D, _tex);
@@ -100,13 +110,24 @@ void draw(void) {
   
   gl4duBindMatrix("modelView");
   gl4duLoadIdentityf();
-  gl4duLookAtf(-1.0f, 0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f);
+
+  float camX = 3.0f * sinf(rot);
+  float camZ = 2.0f * cosf(rot);
+  float camY = 1.2f + 0.3f * sinf(rot * 0.5f);
+  
+  gl4duLookAtf(camX, camY, camZ,
+    0.0f, 0.0f, 0.0f,
+    0.0f, 1.0f, 0.0f);
+    
+  gl4duScalef(2.0f, 1.0f, 2.0f);
   gl4duSendMatrices();
   
   gl4dgDraw(_gridId);
   
   glBindTexture(GL_TEXTURE_2D, 0);
   glUseProgram(0);
+
+  rot += 0.02f * M_PI * get_dt();
 }
 
 void sortie(void) {
