@@ -17,7 +17,7 @@ CPPFLAGS = -I.
 LDFLAGS = -lm
 # définition des fichiers et dossiers
 PACKNAME = fg
-PROGNAME = api8
+PROGNAME = demo-api8
 VERSION = 1.0
 distdir = $(PACKNAME)_$(PROGNAME)-$(VERSION)
 HEADERS = animations/animations.h helpers/audioHelper.h
