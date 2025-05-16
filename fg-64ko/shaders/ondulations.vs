@@ -82,7 +82,7 @@ void main() {
     dc = distance(vec2(0.5), texCoord);
 
     // modifier la hauteur du vertex en piochant une hauteur stockée dans tex.
-    vec3 p = pos + vec3(0.0, hauteur(texCoord) * 5. + dc * sin(elapsed), 0.0);
+    vec3 p = pos + vec3(0.0, hauteur(texCoord) * 2. + dc * sin(elapsed), 0.0);
 
     vec3 vsoNormal = normalize((transpose(inverse(modelView)) * vec4(normale(pos, texCoord), 1.0)).xyz);
     lightIntensity = dot(vsoNormal, -Ld);
