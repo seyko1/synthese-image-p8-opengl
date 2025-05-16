@@ -1,4 +1,4 @@
-version 330
+#version 330
 layout(location=0)in vec3 pos;layout(location=1)in vec3 normal;layout(location=2)in vec2 texCoord;uniform mat4 modelView,projection;uniform float time;uniform float speed;out float vPosHeight;uniform sampler2D permTexture;uniform sampler2D gradTexture;
 #define b .00390625
 #define c .001953125
