@@ -63,7 +63,7 @@ static void initText(GLuint * texId, const char * text)
 
     
     /* chargement de la font */
-    if (!(font = TTF_OpenFont("/usr/share/fonts/truetype/dejavu/DejaVuSerif.ttf", 128))) {
+    if (!(font = TTF_OpenFont("/usr/share/fonts/truetype/dejavu/DejaVuSerif.ttf", 72))) {
         fprintf(stderr, "TTF_OpenFont: %s\n", TTF_GetError());
         return;
     }
@@ -75,7 +75,6 @@ static void initText(GLuint * texId, const char * text)
         fprintf(stderr, "Erreur lors du TTF_RenderText\n");
         return;
     }
-    printf("dim ? %d * %d\n", d->w, d->h);
     
     /* copie de la surface SDL vers une seconde aux spécifications qui correspondent au format OpenGL */
     s = SDL_CreateRGBSurface(0, d->w, d->h, 32, R_MASK, G_MASK, B_MASK, A_MASK);
@@ -86,11 +85,6 @@ static void initText(GLuint * texId, const char * text)
     _texDim[0] = s->w;
     _texDim[1] = s->h;
 
-    int cnt = 0;
-    for (int i = 0; i < s->w * s->h * 4; i++) {
-        if (((unsigned char*) s->pixels)[i] == 0) cnt++;
-    }
-    printf("cnt = %d, w = %d, h = %d\n", cnt, s->w, s->h);
     SDL_FreeSurface(d);
     
     /* transfert vers la texture OpenGL */
@@ -104,24 +98,24 @@ static void initText(GLuint * texId, const char * text)
 static void init(void)
 {
     glClearColor(1.0f, 0.7f, 0.7f, 1.0f);
-    _pId = gl4duCreateProgram("<vs>shaders/credits.vs", "<fs>shaders/credits.fs", NULL);
+    _pId  = gl4duCreateProgram("<vs>shaders/credits.vs", "<fs>shaders/credits.fs", NULL);
     _quad = gl4dgGenQuadf();
     gl4duGenMatrix(GL_FLOAT, "modelViewMatrix");
     gl4duGenMatrix(GL_FLOAT, "projectionMatrix");
 
     initText(&_texId, 
-        "bla bla bla\n\n"
-           "Library :\n"
-           "- GL4Dummies : Fares Belhadj\n"
-           "- OpenGL\n"
-           "bla bla bla\n\n"
-           "bla bla bla\n\n"
-           "bla bla bla\n\n"
-           "Musique :\n" 
-           "bla bla bla\n\n"
-           "bla bla bla\n\n"
-           "bla bla bla\n\n"
-           "bla bla bla\n\n");
+        "Merci à Farès Belhadj pour son enseignement.\n\n\n\n\n"
+        "Merci à Rodolphe Peccatte pour ses idées et son aide.\n\n\n\n\n"
+        "Libraries :\n\n"
+        "  - GL4Dummies (Farès Belhadj)\n"
+        "  - OpenGL\n"
+        "  - SDL2\n\n\n"
+        "Musique : Psychosi (modarchive.org)\n\n\n"
+        "Inspirations :\n\n"
+        "  - Patt Vira         (Jeu de la vie 3D)\n"
+        "  - Daniel Shiffman   (Fractal Mandelbulb)\n"
+        "  - Rodolphe Peccatte (Inversion sphérique en damier)\n\n\n\n\n\n"
+        "Démo 64ko par François Godin\n\n\n");
 }
 
 static void draw(void)
@@ -135,7 +129,7 @@ static void draw(void)
     }
 
     t = (SDL_GetTicks() - t0) / 1000.0f;
-    d = -1.5f /* du retard pour commencer en bas */ + 0.25f /* vitesse */ * t;
+    d = -1.1f /* du retard pour commencer en bas */ + 0.15f /* vitesse */ * t;
 
     glClearColor(0, 0, 0, 1);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -158,7 +152,7 @@ static void draw(void)
     //gl4duScalef(1, 3278/2048, 1);
     gl4duScalef(1, -((float) _texDim[1])/_texDim[0], 1);
     gl4duTranslatef(
-        0,
+        0.0f,
         d * cos(inclinaison * M_PI / 180.0f),
         0.0f
     );
