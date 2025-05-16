@@ -19,7 +19,7 @@ void sphericalInversion(int state) {
       init();
       return;
     case GL4DH_FREE:
-      // sortie();
+      sortie();
       return;
     case GL4DH_UPDATE_WITH_AUDIO:
       return;
@@ -54,11 +54,16 @@ void draw(void) {
 
   float t = gl4dGetElapsedTime() / 1000.0f;
   glUniform1f(glGetUniformLocation(_pId, "elapsed"), t);
-  glUniform2f(glGetUniformLocation(_pId, "resolution"), (float)_dim[0], (float)_dim[1]);
+  glUniform2f(glGetUniformLocation(_pId, "resolution"), _dim[0], _dim[1]);
 
   gl4dgDraw(_quadId);
 
   glUseProgram(0);
 }
 
-void sortie(void) { }
+void sortie(void) {
+    if (_quadId) {
+      gl4dgDelete(_quadId);
+      _quadId = 0;
+   }
+ }

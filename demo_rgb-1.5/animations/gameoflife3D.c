@@ -392,5 +392,24 @@ void restoreBlendState(const BlendState *state) {
 }
 
 void sortie(void) {
+  if (_sphereId) {
+    gl4dgDelete(_sphereId);
+    _sphereId = 0;
+  }
+  
+  if (_cubeId) {
+    gl4dgDelete(_cubeId);
+    _cubeId = 0;
+  }
+
+  if (_cubeEdgeId) {
+    gstatic_t * q = (gstatic_t *)_cubeEdgeId->geom;
+    glDeleteVertexArrays(1, &_cubeEdgeId->vao);
+    glDeleteBuffers(1, &q->buffer);
+    free(q);
+    free(_cubeEdgeId);
+    _cubeEdgeId = NULL;
+  }
+
   freeNoiseTextures();
 }

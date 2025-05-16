@@ -135,4 +135,9 @@ void sortie(void) {
     glDeleteTextures(1, &_tex);
     _tex = 0;
   }
+
+  if (_gridId) {
+    gl4dgDelete(_gridId);
+    _gridId = 0;
+  }
 }

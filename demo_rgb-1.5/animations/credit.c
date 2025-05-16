@@ -162,10 +162,14 @@ static void draw(void)
     glUseProgram(0);
 }
 
-static void quit(void)
-{
+static void quit(void) {
     if (_texId) {
       glDeleteTextures(1, &_texId);
       _texId = 0;
+    }
+
+    if (_quad) {
+        gl4dgDelete(_quad);
+        _quad = 0;
     }
 }
