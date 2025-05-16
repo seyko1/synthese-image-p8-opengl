@@ -7,7 +7,7 @@
 #define MAX_ITER 20
 #define N 8
 #define POINTS_OFFSET 100
-#define DIM 128
+#define DIM 196
 #define MAX_POINTS (DIM * DIM * DIM)
 
 extern GLfloat _dim[];
@@ -32,7 +32,7 @@ static GLuint _vbo = 0;
 static MandelPosition points[MAX_POINTS];
 static int point_count = 0;
 
-static float zTranslation = -800.0f; /* Prendre du recul */
+static float zTranslation = 600.0f; /* Départ devant le centre pour reculer ensuite */
 static float angleRotation = 0.0f;
 
 void mandelbulbFractal(int state) {
@@ -78,9 +78,9 @@ void init(void) {
 }
 
 static double get_dt(void) {
-  static double t0 = 3.0f; // t0 selon le temps écoulé des anim précédentes
+  static double t0 = 20.0f; // t0 selon le temps écoulé des anim précédentes
   double t = gl4dGetElapsedTime();
-  double dt = (t - t0) / 60.0f;
+  double dt = (t - t0) / 120.0f;
   t0 = t;
   return dt;
 }
@@ -89,7 +89,7 @@ void draw(void) {
   GLboolean wasDepthEnabled = glIsEnabled(GL_DEPTH_TEST);
   glEnable(GL_DEPTH_TEST);
   
-  glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+  glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
   glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
   glUseProgram(_pId);
@@ -101,7 +101,7 @@ void draw(void) {
   double dt = get_dt();
   float speed = 3.0f;
 
-  zTranslation += dt * speed;
+  zTranslation += dt * -speed; /* reculer la camera */
   angleRotation += dt * speed;
 
   gl4duBindMatrix("modelView");
