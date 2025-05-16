@@ -54,7 +54,6 @@ void fondu(void (* a0)(int), void (* a1)(int), Uint32 t, Uint32 et, int state) {
     if(a1) a1(state);
     return;
   case 4: // RESIZE 
-    printf("RESIZE TR FONDU \n");
     glGetIntegerv( GL_VIEWPORT, vp );
     for ( i = 0; i < 2; i++ ) {
         glBindTexture( GL_TEXTURE_2D, tex[i] );
