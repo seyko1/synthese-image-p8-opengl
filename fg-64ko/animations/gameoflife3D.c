@@ -149,7 +149,7 @@ void gameoflife3D(int state) {
       }
       int moyenne = value / (length / 4);
 
-      if (moyenne > 3000) {
+      if (moyenne > 1500) {
         canUpdateGrid = GL_TRUE;
       } else {
         canUpdateGrid = GL_FALSE;
@@ -212,9 +212,10 @@ void drawCube(int i, int j, int k) {
   static const float scale = 0.04f;
 
   // Ramener à l'échelle [-1;1]
-  float x  = 2.0f * (i / (NB_CUBES - 1.0f)) - 1.0f;
-  float y  = 2.0f * (j / (NB_CUBES - 1.0f)) - 1.0f;
-  float z  = 2.0f * (k / (NB_CUBES - 1.0f)) - 1.0f;
+  static const float normalizedFactor = 2.0f / (NB_CUBES - 1.0f);
+  float x = i * normalizedFactor - 1.0f;
+  float y = j * normalizedFactor - 1.0f;
+  float z = k * normalizedFactor - 1.0f;
 
   GLboolean isAlive = grid[i][j][k] == GL_TRUE;
   const GLfloat * color = isAlive ? colorAlive : colorDead;
