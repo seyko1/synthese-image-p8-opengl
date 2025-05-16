@@ -1,0 +1,2 @@
+#version 330
+out vec4 fragColor;in float vDepth;vec3 b(in vec3 e){vec3 f=clamp(abs(mod(e.x*6.+vec3(.0,4.,2.),6.)-3.)-1.,.0,1.);return e.z+e.y*(f-.5)*(1.-abs(2.*e.z-1.));}float d(float g,float h,float i,float j,float k){return(g-h)*(k-j)/(i-h)+j;}void main(){float l=d(vDepth,0,20,0.,1.);vec3 m=vec3(l,1.,.5);fragColor=vec4(b(m),1.);}

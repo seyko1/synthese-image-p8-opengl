@@ -1,0 +1,2 @@
+#version 330
+layout(location=0)in vec3 pos;layout(location=1)in vec3 normal;layout(location=2)in vec2 texCoord;uniform mat4 modelView,sphericalProj;uniform vec2 resolution;out vec2 fragCoord;void main(){gl_Position=sphericalProj*modelView*vec4(pos,1.);fragCoord=texCoord*resolution;}

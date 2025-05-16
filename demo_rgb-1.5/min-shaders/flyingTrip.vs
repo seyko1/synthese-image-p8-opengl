@@ -1,0 +1,5 @@
+version 330
+layout(location=0)in vec3 pos;layout(location=1)in vec3 normal;layout(location=2)in vec2 texCoord;uniform mat4 modelView,projection;uniform float time;uniform float speed;out float vPosHeight;uniform sampler2D permTexture;uniform sampler2D gradTexture;
+#define b .00390625
+#define c .001953125
+float d(float f){return f*f*f*(f*(f*6.-15.)+10.);}float e(vec2 g){vec2 h=b*floor(g)+c;vec2 i=fract(g);vec2 j=texture(permTexture,h).rg*4.-1.;float k=dot(j,i);vec2 l=texture(permTexture,h+vec2(b,.0)).rg*4.-1.;float m=dot(l,i-vec2(1.,.0));vec2 n=texture(permTexture,h+vec2(.0,b)).rg*4.-1.;float o=dot(n,i-vec2(.0,1.));vec2 q=texture(permTexture,h+vec2(b,b)).rg*4.-1.;float r=dot(q,i-vec2(1.,1.));vec2 s=mix(vec2(k,o),vec2(m,r),d(i.x));float t=mix(s.x,s.y,d(i.y));return t;}void main(){float v=e(vec2(pos.x*10.0f,(pos.z*10.0f)-time*speed));vec3 w=pos+vec3(.0,v,.0);gl_Position=projection*modelView*vec4(w,1.);vPosHeight=w.y;}

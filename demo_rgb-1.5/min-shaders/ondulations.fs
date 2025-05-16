@@ -1,0 +1,2 @@
+#version 330
+in float lightIntensity;in float dc;out vec4 fragColor;uniform float elapsed;float c(float d,float e,float f,float h,float i){return(d-e)*(i-h)/(f-e)+h;}void main(){float j=c(dc,0,1.4,0,12.6);float k=j+elapsed;float l=c(sin(k),-1.,1.,.4,1.);float m=c(sin(k+2),-1.,1.,.4,1.);float n=c(sin(k+4),-1.,1.,.4,1.);fragColor=vec4(l,m,n,1.)*lightIntensity*lightIntensity;}
