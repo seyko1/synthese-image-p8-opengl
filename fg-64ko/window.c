@@ -60,7 +60,7 @@ int main(int argc, char ** argv) {
   gl4duwKeyDownFunc(keydown);
   gl4duwDisplayFunc(gl4dhDraw);
 
-  ahInitAudio("psychosi.mid");
+  ahInitAudio("Dr.Kildare.mid");
   gl4duwMainLoop();
   return 0;
 }
