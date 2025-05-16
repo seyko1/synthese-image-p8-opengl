@@ -49,7 +49,7 @@ GLfloat _dimBottom, _dimTop;
  * et lance la boucle principale (infinie).
  */
 int main(int argc, char ** argv) {
-  if(!gl4duwCreateWindow(argc, argv, "Ateliers API8 - démo", 
+  if(!gl4duwCreateWindow(argc, argv, "Démo 64ko - François Godin", 
 			 SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 
 			 _dim[0], _dim[1],
 			 SDL_WINDOW_RESIZABLE | SDL_WINDOW_SHOWN))

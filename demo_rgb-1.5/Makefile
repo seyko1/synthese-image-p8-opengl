@@ -16,9 +16,9 @@ CFLAGS = -Wall -O3
 CPPFLAGS = -I.
 LDFLAGS = -lm
 # définition des fichiers et dossiers
-PACKNAME = demo
-PROGNAME = rgb
-VERSION = 1.5
+PACKNAME = api8
+PROGNAME = fg-64ko
+VERSION = 1.0
 distdir = $(PACKNAME)_$(PROGNAME)-$(VERSION)
 HEADERS = animations/animations.h helpers/audioHelper.h
 SOURCES = animations/animations.c helpers/audioHelper.c helpers/noise.c window.c \
