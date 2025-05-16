@@ -110,7 +110,7 @@ static void init(void)
         "  - GL4Dummies (Farès Belhadj)\n"
         "  - OpenGL\n"
         "  - SDL2\n\n\n"
-        "Musique : Psychosi (modarchive.org)\n\n\n"
+        "Musique : Dr.Kildare (freemidi.org)\n\n\n"
         "Inspirations :\n\n"
         "  - Patt Vira         (Jeu de la vie 3D)\n"
         "  - Daniel Shiffman   (Fractal Mandelbulb)\n"
