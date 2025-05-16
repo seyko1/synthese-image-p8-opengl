@@ -16,8 +16,8 @@ CFLAGS = -Wall -O3
 CPPFLAGS = -I.
 LDFLAGS = -lm
 # définition des fichiers et dossiers
-PACKNAME = api8
-PROGNAME = fg-64ko
+PACKNAME = fg
+PROGNAME = api8
 VERSION = 1.0
 distdir = $(PACKNAME)_$(PROGNAME)-$(VERSION)
 HEADERS = animations/animations.h helpers/audioHelper.h
@@ -28,7 +28,7 @@ MSVCSRC = $(patsubst %,<ClCompile Include=\"%\\\" \\/>,$(SOURCES))
 OBJ = $(SOURCES:.c=.o)
 DOXYFILE = documentation/Doxyfile
 VSCFILES = $(PROGNAME).vcxproj $(PROGNAME).sln
-EXTRAFILES = COPYING $(wildcard helpers/* shaders/*.?s images/*.png) $(VSCFILES) psychosi.mid
+EXTRAFILES = COPYING $(wildcard helpers/* shaders/*.?s min-shaders/*.?s images/*.png) $(VSCFILES) Dr.Kildare.mid
 DISTFILES = $(SOURCES) Makefile $(HEADERS) $(DOXYFILE) $(EXTRAFILES)
 # Traitements automatiques pour ajout de chemins et options (ne pas modifier)
 ifneq (,$(shell ls -d /usr/local/include 2>/dev/null | tail -n 1))
