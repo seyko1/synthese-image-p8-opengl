@@ -32,7 +32,7 @@ static GLuint _vbo = 0;
 static MandelPosition points[MAX_POINTS];
 static int point_count = 0;
 
-static float zTranslation = 600.0f; /* Départ devant le centre pour reculer ensuite */
+static float zTranslation = 370.0f; /* Départ devant le centre pour reculer ensuite */
 static float angleRotation = 0.0f;
 
 void mandelbulbFractal(int state) {

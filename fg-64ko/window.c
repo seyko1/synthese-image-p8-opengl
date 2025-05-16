@@ -28,11 +28,11 @@ static void keydown(int keycode);
  * NULL} */
 static GL4DHanime _animations[] = {
   { 10000, flyingTrip, NULL, NULL },
-  { 2000, flyingTrip, gameoflife3D, fondu },
+  { 2000, flyingTrip, mandelbulbFractal, fondu },
+  { 11000, mandelbulbFractal, NULL, NULL },
+  { 2000, mandelbulbFractal, gameoflife3D, fondu },
   { 10000, gameoflife3D, NULL, NULL },
-  { 2000, gameoflife3D, mandelbulbFractal, fondu },
-  { 10000, mandelbulbFractal, NULL, NULL },
-  { 2000, mandelbulbFractal, sphericalInversion, fondu },
+  { 2000, gameoflife3D, sphericalInversion, fondu },
   { 11000, sphericalInversion, NULL, NULL },
   { 2000, sphericalInversion, ondulations, fondu },
   { 12000, ondulations, NULL, NULL },
@@ -60,7 +60,7 @@ int main(int argc, char ** argv) {
   gl4duwKeyDownFunc(keydown);
   gl4duwDisplayFunc(gl4dhDraw);
 
-  ahInitAudio("Dr.Kildare.mid");
+  ahInitAudio("UnravelTokyoGhoul.mid");
   gl4duwMainLoop();
   return 0;
 }

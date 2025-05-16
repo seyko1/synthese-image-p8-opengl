@@ -149,7 +149,7 @@ void gameoflife3D(int state) {
       }
       int moyenne = value / (length / 4);
 
-      if (moyenne > 15000) {
+      if (moyenne > 3000) {
         canUpdateGrid = GL_TRUE;
       } else {
         canUpdateGrid = GL_FALSE;
