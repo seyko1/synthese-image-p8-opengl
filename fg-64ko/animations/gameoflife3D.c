@@ -138,7 +138,7 @@ void gameoflife3D(int state) {
     case GL4DH_FREE:
       sortie();
       return;
-    case GL4DH_UPDATE_WITH_AUDIO:
+    case GL4DH_UPDATE_WITH_AUDIO: {
       int length = ahGetAudioStreamLength();
       short * stream = (short*) ahGetAudioStream(); /* échantillon de 4096 valeurs */
       int value = 0;
@@ -158,6 +158,7 @@ void gameoflife3D(int state) {
         canUpdateGrid = GL_FALSE;
       }
       return;
+    }
     default:
       draw();
       return;

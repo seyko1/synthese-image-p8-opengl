@@ -49,7 +49,7 @@ void ondulations(int state) {
     case GL4DH_FREE:
       sortie();
       return;
-    case GL4DH_UPDATE_WITH_AUDIO:
+    case GL4DH_UPDATE_WITH_AUDIO: {
       int length = ahGetAudioStreamLength();
       short * stream = (short*) ahGetAudioStream(); /* échantillon de 4096 valeurs */
       int value = 0;
@@ -61,6 +61,7 @@ void ondulations(int state) {
       moyenne = value / (length / 4);
       shift(moyenne);
       return;
+    }
     default:
       draw();
       return;
