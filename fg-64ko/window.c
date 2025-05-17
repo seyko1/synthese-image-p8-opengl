@@ -37,7 +37,7 @@ static GL4DHanime _animations[] = {
   { 2000, sphericalInversion, ondulations, fondu },
   { 12000, ondulations, NULL, NULL },
   { 2000, ondulations, credit, fondu },
-  { 18000, credit, NULL, NULL },
+  { 26000, credit, NULL, NULL },
   {    0, NULL, NULL, NULL } /* Toujours laisser à la fin */
 };
 
