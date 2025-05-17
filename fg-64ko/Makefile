@@ -28,7 +28,7 @@ MSVCSRC = $(patsubst %,<ClCompile Include=\"%\\\" \\/>,$(SOURCES))
 OBJ = $(SOURCES:.c=.o)
 DOXYFILE = documentation/Doxyfile
 VSCFILES = $(PROGNAME).vcxproj $(PROGNAME).sln
-EXTRAFILES = COPYING $(wildcard helpers/* shaders/*.?s min-shaders/*.?s images/*.png) $(VSCFILES) UnravelTokyoGhoul.mid
+EXTRAFILES = COPYING $(wildcard helpers/* shaders/*.?s max-shaders/*.?s images/*.png) $(VSCFILES) UnravelTokyoGhoul.mid
 DISTFILES = $(SOURCES) Makefile $(HEADERS) $(DOXYFILE) $(EXTRAFILES)
 # Traitements automatiques pour ajout de chemins et options (ne pas modifier)
 ifneq (,$(shell ls -d /usr/local/include 2>/dev/null | tail -n 1))
@@ -55,6 +55,7 @@ LDFLAGS  += -lGL4Dummies $(shell sdl2-config --libs) -lSDL2_mixer -lSDL2_image -
 all: $(PROGNAME)
 $(PROGNAME): $(OBJ)
 	$(CC) $(OBJ) $(LDFLAGS) -o $(PROGNAME)
+	upx $(PROGNAME)
 %.o: %.c
 	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
 dist: distdir
