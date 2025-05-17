@@ -29,7 +29,7 @@ static void keydown(int keycode);
 static GL4DHanime _animations[] = {
   { 10000, flyingTrip, NULL, NULL },
   { 2000, flyingTrip, mandelbulbFractal, fondu },
-  { 11000, mandelbulbFractal, NULL, NULL },
+  { 12000, mandelbulbFractal, NULL, NULL },
   { 2000, mandelbulbFractal, gameoflife3D, fondu },
   { 10000, gameoflife3D, NULL, NULL },
   { 2000, gameoflife3D, sphericalInversion, fondu },
