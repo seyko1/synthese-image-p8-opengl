@@ -111,7 +111,7 @@ void draw(void) {
   gl4duSendMatrices();
   
   glBindVertexArray(_vao);
-  glPointSize(1.0f);
+  glPointSize(1.5f);
   glDrawArrays(GL_POINTS, 0, point_count);
   glBindVertexArray(0);
 
