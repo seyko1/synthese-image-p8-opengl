@@ -106,14 +106,4 @@ void draw(void) {
 
 void sortie(void) {
   freeNoiseTextures();
-
-  if (_gridId) {
-    gl4dgDelete(_gridId);
-    _gridId = 0;
-  }
-
-  if (_sphereId) {
-    gl4dgDelete(_sphereId);
-    _sphereId = 0;
-  }
 }

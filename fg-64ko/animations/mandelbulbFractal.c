@@ -122,18 +122,6 @@ void draw(void) {
   }
 }
 
-void sortie(void) {
-  if(_vao) {
-    glDeleteVertexArrays(1, &_vao);
-    _vao = 0;
-  }
-
-  if(_vbo) {
-    glDeleteBuffers(1, &_vbo);
-    _vbo = 0;
-  }
-}
-
 int map(int x, int in_min, int in_max, int out_min, int out_max) {
   return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
@@ -192,5 +180,17 @@ void initPoints() {
         }
       }
     }
+  }
+}
+
+void sortie(void) {
+  if(_vao) {
+    glDeleteVertexArrays(1, &_vao);
+    _vao = 0;
+  }
+
+  if(_vbo) {
+    glDeleteBuffers(1, &_vbo);
+    _vbo = 0;
   }
 }

@@ -62,8 +62,4 @@ void draw(void) {
 }
 
 void sortie(void) {
-    if (_quadId) {
-      gl4dgDelete(_quadId);
-      _quadId = 0;
-   }
  }
