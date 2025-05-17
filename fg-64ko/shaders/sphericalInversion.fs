@@ -6,12 +6,22 @@ in vec2 fragCoord;
 uniform float elapsed;
 uniform vec2 resolution;
 
-void main()
-{
+vec3 hsb2rgb(in vec3 c) {
+    vec3 rgb = clamp(abs(mod(c.x * 6.0 + vec3(0.0, 4.0, 2.0), 6.0) - 3.0) - 1.0, 0.0, 1.0);
+
+    return c.z + c.y * (rgb-0.5) * (1.0 - abs(2.0 * c.z - 1.0));
+}
+
+void main() {
     float s = 50.;
     
-    vec3 yellow = vec3(236. / 255., 202. / 255., 128. / 255.);
-    vec3 blue = vec3(107. / 255., 178. / 255., 194. / 255.);
+    float hue = elapsed * 0.1;
+    vec3 hsb = vec3(hue, 0.4, 0.6);
+
+    vec3 rgb = hsb2rgb(hsb);
+
+    vec3 c = hsb2rgb(vec3(hsb.x, hsb.y, hsb.z));
+    vec3 blue = hsb2rgb(vec3(hsb.x + 0.5, hsb.y, hsb.z));
 
     vec2 nc = (fragCoord - (resolution.xy / 2.0));
     float dc = length(nc);
@@ -39,7 +49,7 @@ void main()
     if (py < 0) py = -py;
     
     if (px % 2 == py % 2) {
-        fragColor = vec4(yellow, 1.);
+        fragColor = vec4(c, 1.);
     } else {
         fragColor = vec4(blue, 1.);;
     }
