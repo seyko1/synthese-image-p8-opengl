@@ -8,6 +8,11 @@ static void init(void);
 static void draw(void);
 static void quit(void);
 
+extern void initNoiseTextures(void);
+extern void useNoiseTextures(GLuint pid, int shift);
+extern void unuseNoiseTextures(int shift);
+extern void freeNoiseTextures(void);
+
 extern GLfloat _dim[];
 extern GLfloat _dimBottom;
 extern GLfloat _dimTop;
@@ -18,8 +23,7 @@ static GLuint _texId = 0;
 
 GLint _texDim[2] = { 0 };
 
-void credit(int state)
-{
+void credit(int state) {
     switch (state)
     {
         case GL4DH_INIT:
@@ -36,10 +40,9 @@ void credit(int state)
     }
 }
 
-static void initText(GLuint * texId, const char * text)
-{
+static void initText(GLuint * texId, const char * text) {
     static int firstTime = 1;
-    SDL_Color c = { 255, 179, 186, 255 };
+    SDL_Color c = { 255, 255, 255, 255 };
     SDL_Surface *d, *s;
     TTF_Font * font = NULL;
 
@@ -79,7 +82,7 @@ static void initText(GLuint * texId, const char * text)
     /* copie de la surface SDL vers une seconde aux spécifications qui correspondent au format OpenGL */
     s = SDL_CreateRGBSurface(0, d->w, d->h, 32, R_MASK, G_MASK, B_MASK, A_MASK);
     assert(s);
-    
+
     SDL_BlitSurface(d, NULL, s, NULL);
 
     _texDim[0] = s->w;
@@ -95,41 +98,59 @@ static void initText(GLuint * texId, const char * text)
     glBindTexture(GL_TEXTURE_2D, 0);
 }
 
-static void init(void)
-{
+static void init(void) {
+    initNoiseTextures();
+
     glClearColor(1.0f, 0.7f, 0.7f, 1.0f);
     _pId  = gl4duCreateProgram("<vs>shaders/credits.vs", "<fs>shaders/credits.fs", NULL);
     _quad = gl4dgGenQuadf();
     gl4duGenMatrix(GL_FLOAT, "modelViewMatrix");
     gl4duGenMatrix(GL_FLOAT, "projectionMatrix");
+    
+    initText(&_texId,
+        "\n\n\n\n\n\n\n\n"
+        "Démo 64ko par :\n"
+        "- François Godin\n"
+        "\n\n\n\n\n"
 
-    initText(&_texId, 
-        "Merci à Farès Belhadj pour son enseignement.\n\n\n\n\n"
-        "Merci à Rodolphe Peccatte pour ses idées et son aide.\n\n\n\n\n"
-        "Libraries :\n\n"
+        "\n\n\n\n\n\n\n"
+        "Inspirations\n"
+        "\n"
+        "  - Patt Vira :\n"
+        "    - Jeu de la vie 3D, Waves Pattern\n\n"
+        "  - Daniel Shiffman :\n"
+        "    - Fractal Mandelbulb, Élévation de terrain\n\n"
+        "  - Rodolphe Peccatte :\n"
+        "    - Inversion sphérique en damier, Noise transition\n"
+        "\n\n\n\n"
+
+        "\n\n\n\n\n"
+        "Libraries\n"
         "  - GL4Dummies (Farès Belhadj)\n"
         "  - OpenGL\n"
-        "  - SDL2\n\n\n"
-        "Musique : UnravelTokyoGhoul (freemidi.org)\n\n\n"
-        "Inspirations :\n\n"
-        "  - Patt Vira         (Jeu de la vie 3D)\n"
-        "  - Daniel Shiffman   (Fractal Mandelbulb)\n"
-        "  - Rodolphe Peccatte (Inversion sphérique en damier)\n\n\n\n\n\n"
-        "Démo 64ko par François Godin\n\n\n");
+        "  - SDL2\n"
+        "\n"
+        "Musique\n"
+        "  - Unravel Tokyo Ghoul (freemidi.org)\n"
+        "\n\n\n\n\n\n"
+
+        "\n\n\n\n\n\n\n"
+        "Merci à : \n"
+        "  - Farès Belhadj pour son enseignement.\n"
+        "  - Rodolphe Peccatte pour ses idées et son aide.\n"
+        "\n\n\n\n\n\n\n"
+    );
 }
 
-static void draw(void)
-{
-    const GLfloat inclinaison = 0.0;
+static void draw(void) {
     static GLfloat t0 = -1;
-    GLfloat t, d;
+    GLfloat t;
 
     if (t0 < 0.0f) {
         t0 = SDL_GetTicks();
     }
 
     t = (SDL_GetTicks() - t0) / 1000.0f;
-    d = -1.1f /* du retard pour commencer en bas */ + 0.15f /* vitesse */ * t;
 
     glClearColor(0, 0, 0, 1);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -145,20 +166,19 @@ static void draw(void)
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, _texId);
-    glUniform1i(glGetUniformLocation(_pId, "inv"), 0);
+    glUniform1f(glGetUniformLocation(_pId, "time"), t);
     glUniform1i(glGetUniformLocation(_pId, "tex"), 0);
     gl4duBindMatrix("modelViewMatrix"); 
     gl4duLoadIdentityf();
-    //gl4duScalef(1, 3278/2048, 1);
+
     gl4duScalef(1, -((float) _texDim[1])/_texDim[0], 1);
-    gl4duTranslatef(
-        0.0f,
-        d * cos(inclinaison * M_PI / 180.0f),
-        0.0f
-    );
-    gl4duRotatef(inclinaison, 1, 0, 0);
+    gl4duTranslatef(0.0f, 0.75 - ((int)t / 7) * 0.5f, 0.0f);
+
     gl4duSendMatrices();
+    useNoiseTextures(_pId, 1);
     gl4dgDraw(_quad);
+    unuseNoiseTextures(1);
+
     glUseProgram(0);
 }
 
@@ -172,4 +192,5 @@ static void quit(void) {
         gl4dgDelete(_quad);
         _quad = 0;
     }
+    freeNoiseTextures();
 }
