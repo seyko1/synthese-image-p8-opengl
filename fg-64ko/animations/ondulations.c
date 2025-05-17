@@ -18,8 +18,14 @@ static void init(void);
 static void draw(void);
 static void sortie(void);
 
+extern void initNoiseTextures(void);
+extern void useNoiseTextures(GLuint pid, int shift);
+extern void unuseNoiseTextures(int shift);
+extern void freeNoiseTextures(void);
+
 static GLuint _gridId = 0;
 static GLuint _pId = 0;
+static GLuint _cylinderId = 0;
 static GLuint _tex = 0;
 
 static GLuint _hauteurs[HEIGHTS_SIZE] = { 0 };
@@ -62,11 +68,14 @@ void ondulations(int state) {
 }
 
 void init(void) {
+  initNoiseTextures();
+
   _dimBottom = (-0.1f * _dim[1]) / _dim[0];
   _dimTop = (0.1f * _dim[1]) / _dim[0];
 
   _pId = gl4duCreateProgram("<vs>shaders/ondulations.vs", "<fs>shaders/ondulations.fs", NULL);
   _gridId = gl4dgGenGrid2df(_gridW, _gridH);
+  _cylinderId = gl4dgGenCylinderf(24, 1);
 
   glGenTextures(1, &_tex),
   glBindTexture(GL_TEXTURE_2D, _tex);
@@ -104,6 +113,7 @@ void draw(void) {
   glBindTexture(GL_TEXTURE_2D, _tex);
   // Envoyer les hauteurs dans une texture de dimension 1 * HEIGHTS_SIZE
   glTexImage2D(GL_TEXTURE_2D, 0, GL_R16, 1, HEIGHTS_SIZE, 0, GL_RED, GL_SHORT, _hauteurs);
+  
   glUniform1i(glGetUniformLocation(_pId, "tex"), 0);
   glUniform2fv(glGetUniformLocation(_pId, "pas"), 1, pas);
   glUniform1f(glGetUniformLocation(_pId, "elapsed"), (GLfloat)gl4dGetElapsedTime() / 1000);
@@ -111,6 +121,7 @@ void draw(void) {
   gl4duBindMatrix("modelView");
   gl4duLoadIdentityf();
 
+  glEnable(GL_DEPTH_TEST);
   float camX = 3.0f * sinf(rot);
   float camZ = 2.0f * cosf(rot);
   float camY = 1.2f + 0.3f * sinf(rot * 0.5f);
@@ -118,10 +129,23 @@ void draw(void) {
   gl4duLookAtf(camX, camY, camZ,
     0.0f, 0.0f, 0.0f,
     0.0f, 1.0f, 0.0f);
-    
+  
+  glUniform1i(glGetUniformLocation(_pId, "drawSky"), 1);
+
+  gl4duPushMatrix();
+  
+  gl4duScalef(100.0f, 100.0f, 100.0f);
+  gl4duTranslatef(0.0f, -0.5f, 0.0f);
+  gl4duSendMatrices();
+  gl4dgDraw(_cylinderId);
+  
+  gl4duPopMatrix();  
+  
   gl4duScalef(2.0f, 1.0f, 2.0f);
   gl4duSendMatrices();
   
+  glUniform1i(glGetUniformLocation(_pId, "drawSky"), 0);
+
   gl4dgDraw(_gridId);
   
   glBindTexture(GL_TEXTURE_2D, 0);
@@ -131,13 +155,15 @@ void draw(void) {
 }
 
 void sortie(void) {
+  freeNoiseTextures();
+
   if (_tex) {
     glDeleteTextures(1, &_tex);
     _tex = 0;
   }
 
-  if (_gridId) {
-    gl4dgDelete(_gridId);
-    _gridId = 0;
-  }
+  // if (_gridId) {
+  //   gl4dgDelete(_gridId);
+  //   _gridId = 0;
+  // }
 }

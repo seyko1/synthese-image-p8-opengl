@@ -8,9 +8,11 @@ uniform mat4 projection, modelView;
 uniform sampler2D tex;
 uniform vec2 pas;
 uniform float elapsed;
+uniform int drawSky;
 
 out float lightIntensity;
 out float dc;
+out vec2 vsoTexCoord;
 
 /* Tableau de décalage pour parcourir les 6 points voisins du vertex */
 vec2 offset[7] = vec2[7](
@@ -76,16 +78,29 @@ vec3 normale(vec3 pi, vec2 tc) {
     return n /= 6.0;
 } 
 
-void main() {
+void tapis() {
     vec3 Ld = normalize(vec3(0, -1, -1));
 
     dc = distance(vec2(0.5), texCoord);
 
     // modifier la hauteur du vertex en piochant une hauteur stockée dans tex.
-    vec3 p = pos + vec3(0.0, hauteur(texCoord) * 2. + dc * sin(elapsed), 0.0);
+    vec3 p = pos + vec3(0.0, hauteur(texCoord) * 10. + dc * sin(elapsed), 0.0);
 
     vec3 vsoNormal = normalize((transpose(inverse(modelView)) * vec4(normale(pos, texCoord), 1.0)).xyz);
     lightIntensity = dot(vsoNormal, -Ld);
 
     gl_Position = projection * modelView * vec4(p, 1.0);
+}
+
+void cylinder(){
+    gl_Position = projection * modelView * vec4(pos, 1.0);
+    vsoTexCoord = texCoord;
+}
+
+void main() {
+    if (drawSky == 1) {
+        cylinder();
+    } else {
+        tapis();
+    }
 }
