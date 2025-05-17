@@ -43,7 +43,7 @@ void main(void) {
   
   // Avancer de 2PI (6.28) en 7 sec
   // augmenter l'amplitude du cos à -2  2 puis -1,3 
-  float t = cos(3.14 + 6.28 * time / 7.) * 3. + 1.;
+  float t = cos(3.14 + 6.28 * time / 7.) * 2. + 1.;
 
   if (n - t > 0) {
     fragColor = vec4(0., 0., 0., 1.); 

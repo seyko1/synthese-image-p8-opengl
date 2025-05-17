@@ -1,9 +1,5 @@
 #version 330
-uniform sampler2D tex;
-in  vec2 vsoTexCoord;
-out vec4 fragColor;
-
-void main(void) {
-  vec4 c = texture(tex, vsoTexCoord);
-  fragColor = vec4(c.rgb, 1.0);
-}
+in vec2 vsoTexCoord;out vec4 fragColor;uniform sampler2D tex;uniform float time;uniform sampler2D permTexture;uniform sampler2D gradTexture;
+#define b .00390625
+#define d .001953125
+float e(float g){return g*g*g*(g*(g*6.-15.)+10.);}float f(vec2 h){vec2 i=b*floor(h)+d;vec2 j=fract(h);vec2 k=texture(permTexture,i).rg*4.-1.;float l=dot(k,j);vec2 m=texture(permTexture,i+vec2(b,.0)).rg*4.-1.;float o=dot(m,j-vec2(1.,.0));vec2 p=texture(permTexture,i+vec2(.0,b)).rg*4.-1.;float q=dot(p,j-vec2(.0,1.));vec2 r=texture(permTexture,i+vec2(b,b)).rg*4.-1.;float s=dot(r,j-vec2(1.,1.));vec2 u=mix(vec2(l,q),vec2(o,s),e(j.x));float v=mix(u.x,u.y,e(j.y));return v;}void main(void){float z=f(vsoTexCoord*50.);float A=cos(3.14+6.28*time/7.)*2.+1.;if(z-A>0){fragColor=vec4(0.,0.,0.,1.);}else{vec4 B=texture(tex,vsoTexCoord);fragColor=vec4(B.rgb,1.);}}
