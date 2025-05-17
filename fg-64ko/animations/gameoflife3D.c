@@ -149,12 +149,14 @@ void gameoflife3D(int state) {
       }
       int moyenne = value / (length / 4);
 
-      if (moyenne > 1500) {
+      float t = gl4dGetElapsedTime() / 1000;
+      if (t < 27. && moyenne > 2500) {
+        canUpdateGrid = GL_TRUE;
+      } else if (moyenne > 3000) {
         canUpdateGrid = GL_TRUE;
       } else {
         canUpdateGrid = GL_FALSE;
       }
-      // printf("moy ? %d\n", moyenne);
       return;
     default:
       draw();
