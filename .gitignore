@@ -1,6 +1,15 @@
 .vscode
 *.o
 
+# old projects
+
+flying-trip-1.0
+game_of_life_1.0
+inversion-1.0
+mandelbulb-fractal-1.0
+
+# binaires
+
 modelisation
 rgb
 texte
